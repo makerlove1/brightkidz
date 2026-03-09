@@ -400,45 +400,26 @@ export default {
                        this.currentQuestion.type === 'letter' ? 'letters' : 'numbers';
       this.bkt.updateKnowledge(skillType, this.isCorrect);
       
-      // Play immediate feedback sound
       if (this.isCorrect) {
         this.score++;
-        // Try to play success sound
-        try {
-          // Try direct audio play as fallback
-          const successAudio = new Audio('/sounds/success1.mp3');
-          successAudio.play().catch(e => {
-            errorLogger.logError('Failed to play success sound', e);
-          });
-        } catch (e) {
-          errorLogger.logError('Failed to play success sound', e);
-        }
-        // Try to emit reward event if emitter is available
-        if (this.emitter) {
-          this.emitter.emit("showReward", 1);
+        SoundLib.success1.play();
+        this.emitter.emit("showReward", 1);
+        
+        // Play the sound for the correct answer
+        if (this.currentQuestion.sound) {
+          setTimeout(() => {
+            this.currentQuestion.sound.play();
+          }, 500);
         }
       } else {
-        // Try to play error sound
-        try {
-          // Try direct audio play as fallback
-          const errorAudio = new Audio('/sounds/error1.mp3');
-          errorAudio.play().catch(e => {
-            errorLogger.logError('Failed to play error sound', e);
-          });
-        } catch (e) {
-          errorLogger.logError('Failed to play error sound', e);
-        }
-      }
-      
-      // Always try to play the correct answer sound after feedback
-      if (this.currentQuestion.sound) {
-        setTimeout(() => {
-          try {
+        SoundLib.error1.play();
+        
+        // Play the sound for the correct answer even when wrong
+        if (this.currentQuestion.sound) {
+          setTimeout(() => {
             this.currentQuestion.sound.play();
-          } catch (e) {
-            errorLogger.logError('Failed to play correct answer sound', e);
-          }
-        }, 600);
+          }, 800);
+        }
       }
       
       // Auto advance after delay (for both correct and incorrect)
