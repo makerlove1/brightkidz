@@ -1,15 +1,17 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install --legacy-peer-deps",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
   "routes": [
     {
-      "src": "/service-worker.js",
-      "headers": {
-        "Cache-Control": "public, max-age=0, must-revalidate"
-      },
-      "dest": "/service-worker.js"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
