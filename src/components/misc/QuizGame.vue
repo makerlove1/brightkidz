@@ -160,10 +160,8 @@ export default {
       return this.questions[this.currentQuestionIndex] || {};
     }
   },
-  async mounted() {
-    // Initialize BKT model
-    await this.bkt.initialize();
-    
+  mounted() {
+    // Generate questions immediately (BKT model initializes itself)
     this.generateQuestions();
     
     // Subscribe to language changes and regenerate questions
@@ -180,22 +178,33 @@ export default {
     generateQuestions() {
       this.questions = [];
       
-      // Use BKT to determine question distribution
-      const recommendedCounts = this.bkt.getRecommendedQuestionCount(this.totalQuestions);
-      
-      const questionTypes = [
-        { type: 'object', count: recommendedCounts.objects },
-        { type: 'letter', count: recommendedCounts.letters },
-        { type: 'number', count: recommendedCounts.numbers }
-      ];
-      
-      errorLogger.logInfo('BKT Question Distribution', recommendedCounts);
-      
-      questionTypes.forEach(({ type, count }) => {
-        for (let i = 0; i < count; i++) {
-          this.questions.push(this.createQuestion(type));
+      try {
+        // Use BKT to determine question distribution
+        const recommendedCounts = this.bkt.getRecommendedQuestionCount(this.totalQuestions);
+        
+        const questionTypes = [
+          { type: 'object', count: recommendedCounts.objects },
+          { type: 'letter', count: recommendedCounts.letters },
+          { type: 'number', count: recommendedCounts.numbers }
+        ];
+        
+        errorLogger.logInfo('BKT Question Distribution', recommendedCounts);
+        
+        questionTypes.forEach(({ type, count }) => {
+          for (let i = 0; i < count; i++) {
+            this.questions.push(this.createQuestion(type));
+          }
+        });
+      } catch (error) {
+        // Fallback: equal distribution if BKT fails
+        errorLogger.logError('BKT question distribution failed, using fallback', error);
+        const perType = Math.floor(this.totalQuestions / 3);
+        for (let i = 0; i < perType; i++) {
+          this.questions.push(this.createQuestion('object'));
+          this.questions.push(this.createQuestion('letter'));
+          this.questions.push(this.createQuestion('number'));
         }
-      });
+      }
       
       // Shuffle questions
       this.questions = this.shuffleArray(this.questions);
