@@ -405,7 +405,11 @@ export default {
         this.score++;
         // Try to play success sound
         try {
-          SoundLib.success1.play();
+          // Try direct audio play as fallback
+          const successAudio = new Audio('/sounds/success1.mp3');
+          successAudio.play().catch(e => {
+            errorLogger.logError('Failed to play success sound', e);
+          });
         } catch (e) {
           errorLogger.logError('Failed to play success sound', e);
         }
@@ -416,7 +420,11 @@ export default {
       } else {
         // Try to play error sound
         try {
-          SoundLib.error1.play();
+          // Try direct audio play as fallback
+          const errorAudio = new Audio('/sounds/error1.mp3');
+          errorAudio.play().catch(e => {
+            errorLogger.logError('Failed to play error sound', e);
+          });
         } catch (e) {
           errorLogger.logError('Failed to play error sound', e);
         }
