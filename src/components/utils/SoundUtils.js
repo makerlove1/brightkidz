@@ -400,4 +400,7 @@ export const SoundLib = {
   success3: new Sound("success3"),
   success4: new Sound("success4"),
   success5: new Sound("success5"),
+  error1: new Sound("error1"),
+  error3: new Sound("error3"),
+  error4: new Sound("error4"),
 };

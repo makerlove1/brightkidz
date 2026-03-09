@@ -403,16 +403,33 @@ export default {
       // Play immediate feedback sound
       if (this.isCorrect) {
         this.score++;
-        SoundLib.success1.play();
-        this.emitter.emit("showReward", 1);
+        // Try to play success sound
+        try {
+          SoundLib.success1.play();
+        } catch (e) {
+          errorLogger.logError('Failed to play success sound', e);
+        }
+        // Try to emit reward event if emitter is available
+        if (this.emitter) {
+          this.emitter.emit("showReward", 1);
+        }
       } else {
-        SoundLib.error1.play();
+        // Try to play error sound
+        try {
+          SoundLib.error1.play();
+        } catch (e) {
+          errorLogger.logError('Failed to play error sound', e);
+        }
       }
       
-      // Always play the correct answer sound after feedback
+      // Always try to play the correct answer sound after feedback
       if (this.currentQuestion.sound) {
         setTimeout(() => {
-          this.currentQuestion.sound.play();
+          try {
+            this.currentQuestion.sound.play();
+          } catch (e) {
+            errorLogger.logError('Failed to play correct answer sound', e);
+          }
         }, 600);
       }
       
@@ -424,7 +441,7 @@ export default {
           // Show mastery summary at end
           this.showMasteryPanel = true;
         }
-      }, 2500);
+      }, 2000);
       
       errorLogger.logInfo('Quiz answer selected', {
         question: this.currentQuestionIndex,
