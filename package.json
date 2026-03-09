@@ -9,6 +9,7 @@
     "lint": "eslint src --ext .js,.vue --fix"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.2.0",
     "@interactjs/interactjs": "^1.10.11",
     "axios": "^1.13.6",
     "mitt": "^3.0.0",
