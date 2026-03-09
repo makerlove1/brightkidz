@@ -43,7 +43,7 @@ export default {
         error.addEventListener("ended", soundCallback, { once: true });
       }
       this.errors.push({
-        image: "img/" + ArrayUtils.getRandomArrayElement(this.errorImages),
+        image: "/img/" + ArrayUtils.getRandomArrayElement(this.errorImages),
         key: new Date().getTime(),
       });
       setTimeout(

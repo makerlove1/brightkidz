@@ -67,8 +67,8 @@ export default {
   name: "Footer",
   data() {
     return {
-      voiceOptionImageBoy: "img/boy_happy.png",
-      voiceOptionImageGirl: "img/girl_happy.png",
+      voiceOptionImageBoy: "/img/boy_happy.png",
+      voiceOptionImageGirl: "/img/girl_happy.png",
       isShowBoyVoiceAnimationActive: false,
       isShowGirlVoiceAnimationActive: false,
     };
@@ -82,12 +82,12 @@ export default {
   mounted() {
     this.voiceOptionImageBoy =
       SoundUtils.selectedVoice.id !== "boy0"
-        ? "img/boy_bored.png"
-        : "img/boy_happy.png";
+        ? "/img/boy_bored.png"
+        : "/img/boy_happy.png";
     this.voiceOptionImageGirl =
       SoundUtils.selectedVoice.id !== "girl0"
-        ? "img/girl_bored.png"
-        : "img/girl_happy.png";
+        ? "/img/girl_bored.png"
+        : "/img/girl_happy.png";
   },
   methods: {
     previous: function () {
@@ -104,8 +104,8 @@ export default {
       }
     },
     useBoyVoice: function () {
-      this.voiceOptionImageBoy = "img/boy_happy.png";
-      this.voiceOptionImageGirl = "img/girl_bored.png";
+      this.voiceOptionImageBoy = "/img/boy_happy.png";
+      this.voiceOptionImageGirl = "/img/girl_bored.png";
       SoundUtils.useBoy0Voice();
       let sounds = [
         SoundLib.hi,
@@ -127,8 +127,8 @@ export default {
       }
     },
     useGirlVoice: function () {
-      this.voiceOptionImageBoy = "img/boy_bored.png";
-      this.voiceOptionImageGirl = "img/girl_happy.png";
+      this.voiceOptionImageBoy = "/img/boy_bored.png";
+      this.voiceOptionImageGirl = "/img/girl_happy.png";
       SoundUtils.useGirl0Voice();
       let sounds = [
         SoundLib.hi,

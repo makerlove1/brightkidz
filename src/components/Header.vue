@@ -182,7 +182,7 @@ export default {
       let n = this.getDecimalPart(this.rewards);
       // n is a number between 0 and 9 now. so we need to ensure that it's bigger than our image array length
       n = n % this.rewardImages.length;
-      return "img/" + this.rewardImages[n] + ".svg";
+      return "/img/" + this.rewardImages[n] + ".svg";
     },
     getNextRewardImage: function () {
       let lastNumberOfCurrentRewards = this.rewards + "";
@@ -199,7 +199,7 @@ export default {
         n++;
       }
       n = n % this.rewardImages.length;
-      return "img/" + this.rewardImages[n] + ".svg";
+      return "/img/" + this.rewardImages[n] + ".svg";
     },
     navBack: function () {
       try {
