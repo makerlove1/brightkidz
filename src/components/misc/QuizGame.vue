@@ -26,7 +26,7 @@
         <!-- Text Display (for letter/number questions) -->
         <div v-else class="question-text">
           <div class="display-character-image">
-            <img :src="`img/characters/${currentQuestion.display}.svg`" :alt="currentQuestion.display" />
+            <img :src="`/img/characters/${currentQuestion.display}.svg`" :alt="currentQuestion.display" />
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@
           </div>
           <!-- Show character image for letter/number questions -->
           <div v-else class="choice-character-image">
-            <img :src="`img/characters/${choice}.svg`" :alt="choice" />
+            <img :src="`/img/characters/${choice}.svg`" :alt="choice" />
           </div>
           <span class="choice-text">{{ getChoiceText(choice) }}</span>
         </button>
@@ -231,26 +231,26 @@ export default {
       };
       
       const objects = [
-        { key: 'cat', image: 'img/cat1.png', sound: SoundLib.cat },
-        { key: 'dog', image: 'img/dog1.svg', sound: SoundLib.dog },
-        { key: 'bird', image: 'img/bird1.svg', sound: SoundLib.bird },
-        { key: 'fish', image: 'img/fish1.svg', sound: SoundLib.fish },
-        { key: 'butterfly', image: 'img/butterfly.svg', sound: SoundLib.butterfly },
-        { key: 'frog', image: 'img/frog1.svg', sound: SoundLib.frog },
-        { key: 'car', image: 'img/car1.svg', sound: SoundLib.car },
-        { key: 'tree', image: 'img/tree1.svg', sound: SoundLib.tree },
-        { key: 'dragon', image: 'img/dragon1.svg', sound: SoundLib.dragon },
-        { key: 'unicorn', image: 'img/unicorn1.svg', sound: SoundLib.unicorn },
-        { key: 'penguin', image: 'img/penguin1.svg', sound: SoundLib.penguin },
-        { key: 'chicken', image: 'img/chicken1.svg', sound: SoundLib.chicken },
-        { key: 'goat', image: 'img/goat1.svg', sound: SoundLib.goat },
-        { key: 'dino', image: 'img/dino1.svg', sound: SoundLib.dino },
-        { key: 'rabbit', image: 'img/rabbit1.svg', sound: SoundLib.bunny },
-        { key: 'snail', image: 'img/snail1.svg', sound: SoundLib.snail },
-        { key: 'ambulance', image: 'img/ambulance1.svg', sound: SoundLib.ambulance },
-        { key: 'fireTruck', image: 'img/fire_truck1.svg', sound: SoundLib.fireEngine },
-        { key: 'policeCar', image: 'img/police_car.svg', sound: SoundLib.police },
-        { key: 'tractor', image: 'img/tractor1.svg', sound: SoundLib.tractor }
+        { key: 'cat', image: '/img/cat1.png', sound: SoundLib.cat },
+        { key: 'dog', image: '/img/dog1.svg', sound: SoundLib.dog },
+        { key: 'bird', image: '/img/bird1.svg', sound: SoundLib.bird },
+        { key: 'fish', image: '/img/fish1.svg', sound: SoundLib.fish },
+        { key: 'butterfly', image: '/img/butterfly.svg', sound: SoundLib.butterfly },
+        { key: 'frog', image: '/img/frog1.svg', sound: SoundLib.frog },
+        { key: 'car', image: '/img/car1.svg', sound: SoundLib.car },
+        { key: 'tree', image: '/img/tree1.svg', sound: SoundLib.tree },
+        { key: 'dragon', image: '/img/dragon1.svg', sound: SoundLib.dragon },
+        { key: 'unicorn', image: '/img/unicorn1.svg', sound: SoundLib.unicorn },
+        { key: 'penguin', image: '/img/penguin1.svg', sound: SoundLib.penguin },
+        { key: 'chicken', image: '/img/chicken1.svg', sound: SoundLib.chicken },
+        { key: 'goat', image: '/img/goat1.svg', sound: SoundLib.goat },
+        { key: 'dino', image: '/img/dino1.svg', sound: SoundLib.dino },
+        { key: 'rabbit', image: '/img/rabbit1.svg', sound: SoundLib.bunny },
+        { key: 'snail', image: '/img/snail1.svg', sound: SoundLib.snail },
+        { key: 'ambulance', image: '/img/ambulance1.svg', sound: SoundLib.ambulance },
+        { key: 'fireTruck', image: '/img/fire_truck1.svg', sound: SoundLib.fireEngine },
+        { key: 'policeCar', image: '/img/police_car.svg', sound: SoundLib.police },
+        { key: 'tractor', image: '/img/tractor1.svg', sound: SoundLib.tractor }
       ];
       
       const correct = objects[Math.floor(Math.random() * objects.length)];
