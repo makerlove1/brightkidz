@@ -160,11 +160,8 @@ export default {
       return this.questions[this.currentQuestionIndex] || {};
     }
   },
-  async mounted() {
-    // Initialize BKT model first
-    await this.bkt.initialize();
-    
-    // Generate questions immediately
+  mounted() {
+    // Generate questions immediately (BKT model initializes itself)
     this.generateQuestions();
     
     // Subscribe to language changes and regenerate questions
@@ -446,12 +443,10 @@ export default {
       
       // Auto advance after delay (for both correct and incorrect)
       setTimeout(() => {
-        console.log('Auto-advancing to next question...');
         if (this.currentQuestionIndex < this.totalQuestions - 1) {
           this.nextQuestion();
         } else {
           // Show mastery summary at end
-          console.log('Quiz complete, showing mastery panel');
           this.showMasteryPanel = true;
         }
       }, 2000);
@@ -465,12 +460,10 @@ export default {
     },
     
     nextQuestion() {
-      console.log('nextQuestion called, current index:', this.currentQuestionIndex, 'total:', this.totalQuestions);
       if (this.currentQuestionIndex < this.totalQuestions - 1) {
         this.currentQuestionIndex++;
         this.selectedAnswer = null;
         this.isCorrect = false;
-        console.log('Moved to next question:', this.currentQuestionIndex);
       }
     },
     
