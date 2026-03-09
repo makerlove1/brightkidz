@@ -1,22 +1,22 @@
 <template>
   <NavPage>
     <LinkTile
-      title="Memory"
+      :title="t('memory')"
       nav-path="/memory"
       src="img/games/MemoryBackface.png"
-      alt="memory games"
+      :alt="t('memoryAlt')"
     />
     <LinkTile
-      title="Bewegen"
+      :title="t('dragdrop')"
       nav-path="/dragdrop"
       src="img/games/DD.png"
-      alt="drag and drop games"
+      :alt="t('dragdropAlt')"
     />
     <LinkTile
-      title="Sonstiges"
+      :title="t('misc')"
       nav-path="/misc"
       src="img/games/Calculate.png"
-      alt="Other uncategorized games"
+      :alt="t('miscAlt')"
     />
   </NavPage>
 </template>
@@ -24,6 +24,7 @@
 <script>
 import NavPage from "./NavPage";
 import LinkTile from "./LinkTile";
+import languageManager from "@/utils/LanguageManager";
 
 export default {
   name: "Home",
@@ -31,6 +32,29 @@ export default {
   props: {
     msg: String,
   },
+  data() {
+    return {
+      currentLanguage: languageManager.currentLanguage || 'en',
+      unsubscribe: null
+    };
+  },
+  mounted() {
+    // Subscribe to language changes
+    this.unsubscribe = languageManager.subscribe(() => {
+      this.currentLanguage = languageManager.getLanguage();
+      this.$forceUpdate(); // Force re-render when language changes
+    });
+  },
+  beforeUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  },
+  methods: {
+    t(key) {
+      return languageManager.translate(key);
+    }
+  }
 };
 </script>
 

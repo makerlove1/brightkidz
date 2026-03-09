@@ -1,112 +1,269 @@
-# simple educational games for kids
+# 🎓 EduKiz - Educational Learning Platform
 
-The project is WIP. I only got a couple of _hours_ in the next month. Will see how far I can push this...
-Project _coding_ language is english.
-Anyway: As long as no native english speaker can contribute to this project, I am only able to provide german sounds.
-Soon I may add chinese as well...
+A comprehensive educational platform for children with games, progress tracking, and admin management system.
 
-## Objective
+## 🌟 Features
 
-Simple HTML/JS educational games for children
+### For Students
+- 🧠 **Memory Games** - Animal and character matching
+- 🎯 **Drag & Drop Games** - Word building and character learning
+- 🎮 **Quiz Games** - Interactive learning assessments
+- 🏆 **Progress Tracking** - Automatic game progress saving
+- ⭐ **Rewards System** - Earn points and achievements
+- 🌍 **Multi-language** - English, Filipino, German support
+- 📱 **Mobile Friendly** - Responsive design for all devices
 
-## Boundaries
+### For Administrators
+- 📊 **Admin Dashboard** - Comprehensive analytics
+- 👥 **User Management** - View and manage all users
+- 📈 **Progress Monitoring** - Track student learning progress
+- 🔐 **Login Tracking** - Monitor user activity
+- 📋 **Detailed Reports** - Game statistics and performance data
 
-- Code should be as simple as possible, so it's easy for everyone to extend
-- Must run offline (e.g. by simply copying to a smartphone, tablet, raspberry pi, laptop, ...)
+### Technical Features
+- 🔒 **Secure Authentication** - JWT-based login system
+- 🗄️ **MySQL Database** - Robust data storage
+- 🎨 **Modern UI** - Vue.js 3 with responsive design
+- 🚀 **PWA Support** - Works offline
+- 🔊 **Voice Support** - Text-to-speech in multiple languages
 
-## Available Games
-This section shows a list of implemented Games, for planned Games see Project Page Issues. 
+## 🚀 Live Demo
 
-### Memory
-Memory Games with:
-- Letters and numbers
-- Animals
-Alphabetic Games with:
-- Drag and Drop letters on letters
-- Drag letters to a word
-Arithmetic Games:
-- Calculations with +- for equations with solutions between 0 and 18
-Other Games:
-- Text to speech. Provide a text and let the computer read it out loud. Uses the Web Speech API. This currently might not function well on all browsers. Furthermore, it definitely has some room for improvements.
+- **Frontend**: [https://your-app.vercel.app](https://your-app.vercel.app)
+- **Admin Dashboard**: [https://your-app.vercel.app/#/admin](https://your-app.vercel.app/#/admin)
 
-## Project setup
-### Framework decision
-This project uses vue now.
-Why? 
+### Demo Credentials
+- **Admin**: username: `admin`, password: `admin123`
+- **Guest Mode**: Play without registration
 
-- After the first super simple game, I realized that it's way more pain in the a* than expected to do everything vanilla.  
-- Vue is completely new for me, but even with my pretty limited web ui experience, I felt quite comfortable with it after only about 3 hours of practice. 
-- I also considered Angular, but even though I did make small PoC apps with it, it felt more complicated. 
-- React seems to be a bit more complicated. At least for me after reading the first tutorial.   
-- OpenUi5 suites games not really well. It's rather made for enterprise applications with tables, diagrams and formulars.
-- ... Another one from the thousands of frameworks I didn't even google, because there are just too many.   
+## 🛠️ Technology Stack
 
-### Setup
-1. Clone the repository
-2. Install npm:
-[npm](https://www.npmjs.com/get-npm)
-3. Install nvm [nvm](https://github.com/nvm-sh/nvm)
-4. run `nvm install 16; nvm use 16`
-5. run `npm install`
+### Frontend
+- **Vue.js 3** - Progressive JavaScript framework
+- **Vue Router 4** - Client-side routing
+- **Axios** - HTTP client
+- **SCSS** - Styling
+- **Font Awesome** - Icons
 
-### Compiles and hot-reloads for development
+### Backend
+- **Node.js** - JavaScript runtime
+- **Express.js** - Web framework
+- **MySQL** - Database
+- **JWT** - Authentication
+- **bcrypt** - Password hashing
 
+### Deployment
+- **Vercel** - Frontend hosting
+- **Railway** - Backend and database hosting
+
+## 📦 Installation
+
+### Prerequisites
+- Node.js 16+
+- MySQL (via Laragon or standalone)
+- Git
+
+### Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/makerlove1/brightkidz.git
+   cd brightkidz
+   ```
+
+2. **Install dependencies**
+   ```bash
+   # Frontend
+   npm install --legacy-peer-deps
+   
+   # Backend
+   cd backend
+   npm install
+   cd ..
+   ```
+
+3. **Setup database**
+   - Start MySQL (via Laragon or standalone)
+   - Create database: `edukiz`
+   - Run: `backend/config/init-database.sql`
+
+4. **Configure environment**
+   ```bash
+   # Backend: Update backend/.env
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=your-password
+   DB_NAME=edukiz
+   
+   # Frontend: Update .env
+   VUE_APP_API_URL=http://localhost:3000/api
+   ```
+
+5. **Create admin user**
+   ```bash
+   cd backend
+   npm run create-admin
+   ```
+
+6. **Start development servers**
+   ```bash
+   # Terminal 1 - Backend
+   cd backend
+   npm start
+   
+   # Terminal 2 - Frontend
+   npm run serve
+   ```
+
+7. **Access the application**
+   - Frontend: http://localhost:8080
+   - Admin: http://localhost:8080/#/admin
+   - API: http://localhost:3000
+
+## 🚀 Deployment
+
+### Quick Deploy to Vercel + Railway
+
+1. **Deploy Backend to Railway**
+   - Sign up at [railway.app](https://railway.app)
+   - Deploy from GitHub repository
+   - Add MySQL database
+   - Set environment variables
+   - Initialize database schema
+
+2. **Deploy Frontend to Vercel**
+   - Sign up at [vercel.com](https://vercel.com)
+   - Import GitHub repository
+   - Set environment variable: `VUE_APP_API_URL`
+   - Deploy!
+
+For detailed deployment instructions, see:
+- 📖 [Quick Deploy Guide](DEPLOY_TO_VERCEL.md)
+- 📚 [Complete Deployment Guide](DEPLOYMENT_GUIDE.md)
+
+## 📖 Documentation
+
+### Setup Guides
+- 🚀 [Quick Start](QUICK_START.md)
+- ⚙️ [Admin Setup Guide](ADMIN_SETUP_GUIDE.md)
+- 🔧 [System Architecture](SYSTEM_ARCHITECTURE.md)
+
+### Development
+- 🎮 [Game Integration Examples](INTEGRATION_EXAMPLE.md)
+- 📊 [Progress Tracking Guide](src/mixins/progressTrackingMixin.js)
+- 🌍 [Language System](LANGUAGE_SYSTEM_GUIDE.md)
+
+### Deployment
+- ☁️ [Vercel Deployment](VERCEL_DEPLOYMENT.md)
+- 🚂 [Railway Setup](DEPLOYMENT_GUIDE.md)
+- 📋 [Deployment Summary](DEPLOYMENT_SUMMARY.md)
+
+## 🎮 Game Integration
+
+Add progress tracking to your games:
+
+```javascript
+import { progressTrackingMixin } from '@/mixins/progressTrackingMixin';
+
+export default {
+  mixins: [progressTrackingMixin],
+  mounted() {
+    this.startGameTracking('memory', 'Memory Animals');
+  },
+  methods: {
+    onGameComplete() {
+      this.saveGameProgress(this.score, 1, true);
+      this.updateRewards(10);
+    }
+  }
+}
 ```
-npm run serve
-```
 
-### Compiles and minifies for production
+## 🔒 Security Features
 
-```
-nvm use 16; npm run build
-```
+- ✅ JWT authentication
+- ✅ Password hashing (bcrypt)
+- ✅ SQL injection prevention
+- ✅ CORS protection
+- ✅ Role-based access control
+- ✅ Secure session management
 
-### Lints and fixes files
+## 📊 Database Schema
 
-```
-npm run lint
-```
+### Core Tables
+- **users** - User accounts and authentication
+- **user_sessions** - Login/logout tracking
+- **user_progress** - Game-by-game progress
+- **game_statistics** - Aggregated user statistics
 
-### Formate code:
-```
-npm run prettier
-```
+### Views
+- **user_login_summary** - Login statistics per user
+- **user_progress_summary** - Progress summary per user
 
-### Release
-Run: `npm run tag-deployment`
+## 🤝 Contributing
 
-### Distribute
-For some reason it's currently almost impossible to get a free and valid SSL certificate for the current webhoster (see distribute old).
-Therefore, I simply decided to a github page again to distribute the content. 
-But: This made the repository unnecessary huge and was horrible to maintain.
-Therefore, I just created a second repository https://github.com/timmalich/edukiz_live. 
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Commit changes: `git commit -am 'Add feature'`
+4. Push to branch: `git push origin feature-name`
+5. Submit a pull request
 
-To distribute: 
-- clone the other repository too
-- Name it edukiz_live
-- put it next to this repository
-- run: `nvm use 16; npm run deploy-github`
+## 📝 License
 
-### Distribute (deprecated but still alive)
-I'm just using the first recommended free webhoster for distribution. 
-Previously I just put the 'dist' folder on a separate github branch and distributed it directly as github page.
-But: This makes the repository unnecessary huge and is horrible to maintain.
-If you want to contribute you may just contact me for the transcrypted ftp password.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-#### install transcrypt
-    git clone https://github.com/elasticdog/transcrypt.git
-    cd transcrypt/
-    #Linux:
-    sudo ln -s ${PWD}/transcrypt /usr/local/bin/transcrypt
-    
-#### initialize transcrypt for this repo once by:
-    cd /c/dev/git-repos/runtime-api
-    transcrypt -c aes-256-cbc -p 'ThePassword' 
+## 🆘 Support
 
-#### install ncftp
-    sudo apt-get install ncftp
-    
-#### Distribute
-    ./scripts/distribute.sh 
+### Documentation
+- 📚 Check the [documentation files](/) in the repository
+- 🔧 Review [troubleshooting guides](ADMIN_SETUP_GUIDE.md#troubleshooting)
 
-## Feature TODOs
+### Issues
+- 🐛 Report bugs via [GitHub Issues](https://github.com/makerlove1/brightkidz/issues)
+- 💡 Request features via [GitHub Issues](https://github.com/makerlove1/brightkidz/issues)
+
+### Quick Help
+- ❓ Check [FAQ sections](ADMIN_SETUP_GUIDE.md#troubleshooting) in guides
+- 🔍 Search existing [issues](https://github.com/makerlove1/brightkidz/issues)
+
+## 🎯 Roadmap
+
+### Upcoming Features
+- [ ] Parent dashboard
+- [ ] Teacher accounts
+- [ ] Achievement system
+- [ ] Leaderboards
+- [ ] Email notifications
+- [ ] Social login (Google, Facebook)
+- [ ] Mobile app (React Native)
+- [ ] Offline mode improvements
+
+### Technical Improvements
+- [ ] Redis caching
+- [ ] Load balancing
+- [ ] Database optimization
+- [ ] Performance monitoring
+- [ ] Automated testing
+- [ ] CI/CD pipeline
+
+## 📈 Stats
+
+- 🎮 **Games**: Memory, Drag & Drop, Quiz
+- 🌍 **Languages**: 3 (English, Filipino, German)
+- 📱 **Platforms**: Web, PWA, Mobile-ready
+- 🔒 **Security**: JWT, bcrypt, CORS
+- ☁️ **Deployment**: Vercel + Railway
+
+## 🙏 Acknowledgments
+
+- Vue.js team for the amazing framework
+- Express.js for the robust backend framework
+- Railway and Vercel for excellent hosting platforms
+- Font Awesome for beautiful icons
+- All contributors and testers
+
+---
+
+**Made with ❤️ for education**
+
+*Empowering children's learning through interactive games and comprehensive progress tracking.*

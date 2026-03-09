@@ -1,0 +1,64 @@
+/* Global design tokens and responsive utilities */
+:root {
+  --bg-start: #f6d365; /* warm pastel */
+  --bg-end: #fda085;   /* warm tone */
+  --accent: #6c63ff;   /* primary accent */
+  --accent-2: #00c3ff; /* secondary accent */
+  --surface: rgba(255,255,255,0.12);
+  --text: #1f2937;
+  --muted: rgba(31,41,55,0.7);
+  --max-content-width: 1100px;
+}
+
+/* global reset + friendly font sizing */
+html, body, #app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--text);
+}
+
+body {
+  background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  background-attachment: fixed;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* central content container */
+.content-window {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  position: relative;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* site logo common class */
+.site-logo {
+  height: 42px;
+  width: auto;
+  display: block;
+  user-drag: none;
+}
+
+/* responsive typography */
+html { font-size: 16px; }
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+  .content-window { padding: 12px; }
+  .site-logo { height: 36px; }
+}
+
+@media (max-width: 480px) {
+  html { font-size: 14px; }
+  .content-window { padding: 10px; }
+  .site-logo { height: 32px; }
+}
+
+/* small utility */
+.center-row { display:flex; align-items:center; justify-content:center; }

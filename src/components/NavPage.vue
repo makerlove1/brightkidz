@@ -1,9 +1,6 @@
 <template>
   <div class="content">
     <Header :nav-back-path="navBackPath">
-      <div class="game-button">
-        <a href="https://github.com/timmalich/edukiz" class="fab fa-github"></a>
-      </div>
     </Header>
     <div class="link-area">
       <slot></slot>
@@ -31,13 +28,22 @@ export default {
 
 <style scoped>
 .link-area {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
   justify-content: center;
   position: relative;
   max-width: 100%;
-  height: calc(100% - 35pt - 35pt);
-  max-height: calc(100% - 35pt - 35pt);
-  overflow: auto;
+  padding-bottom: 12px;
+  overflow-y: auto;
+}
+
+/* ensure full-height content plays nicely on mobile */
+@media (max-width: 768px) {
+  .link-area {
+    gap: 12px;
+    grid-template-columns: 1fr;
+    padding: 8px 0;
+  }
 }
 </style>

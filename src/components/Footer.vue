@@ -165,16 +165,44 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 10px;
+  margin-top: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  
+  // Mobile optimizations
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 50pt;
+    padding: 8px;
+    border-radius: 12px;
+    gap: 5px;
+    flex-wrap: nowrap;
+  }
+  
+  // Landscape mobile
+  @media (max-width: 768px) and (orientation: landscape) {
+    min-height: 44pt;
+    padding: 6px;
+  }
 }
 
 @keyframes highlight-animation {
+  0% {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
   33% {
-    background-color: #dcb308;
-    color: #4385f4f0;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    transform: scale(1.05);
   }
   66% {
-    background-color: #5fec48;
-    color: rgba(67, 133, 243, 0.94);
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    transform: scale(1.05);
+  }
+  100% {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
 }
 
@@ -186,7 +214,9 @@ export default {
 }
 
 .disabled {
-  background-color: #7f7f7f;
+  background: linear-gradient(135deg, #7f7f7f 0%, #5a5a5a 100%);
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .gameSwitchesHidden {

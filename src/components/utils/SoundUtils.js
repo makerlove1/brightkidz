@@ -1,22 +1,76 @@
 import { Voice } from "@/models/Voice";
+import errorLogger from "@/utils/ErrorLogger";
+import languageManager from "@/utils/LanguageManager";
 
-const savedVoice = JSON.parse(localStorage.getItem("selectedVoice"));
+// Initialize voice asynchronously
+let initializedVoice = null;
+
 const voices = {
   boy0: new Voice("boy0", "Boy Voice"),
   girl0: new Voice("girl0", "Girl Voice"),
 };
+
 const randomVoice =
   voices[
     Object.keys(voices)[Math.floor(Math.random() * Object.keys(voices).length)]
   ];
 
+// Load voice preference from database
+async function loadVoicePreference() {
+  try {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const axios = (await import('axios')).default;
+      const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+      const response = await axios.get(
+        `${API_URL}/preferences`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.data.selectedVoice) {
+        return voices[response.data.selectedVoice.id] || randomVoice;
+      }
+    }
+    
+    // Fallback to localStorage
+    const savedVoice = JSON.parse(localStorage.getItem("selectedVoice"));
+    return savedVoice ? voices[savedVoice.id] : randomVoice;
+  } catch (e) {
+    const savedVoice = JSON.parse(localStorage.getItem("selectedVoice"));
+    return savedVoice ? voices[savedVoice.id] : randomVoice;
+  }
+}
+
+// Initialize voice
+loadVoicePreference().then(voice => {
+  initializedVoice = voice;
+});
+
 export const SoundUtils = {
   voices: voices,
-  selectedVoice: savedVoice ? voices[savedVoice.id] : randomVoice,
+  get selectedVoice() {
+    return initializedVoice || randomVoice;
+  },
+  set selectedVoice(voice) {
+    initializedVoice = voice;
+  },
   audios: {},
   eventListeners: [],
+  
+  // Get current language path for sounds
+  getLanguagePath: function() {
+    return languageManager.getSoundPath();
+  },
   preload: function (src) {
-    this.audios[src] = new Audio("sounds/" + src + ".mp3");
+    try {
+      const audio = new Audio("sounds/" + src + ".mp3");
+      audio.addEventListener('error', () => {
+        errorLogger.logAudioError("sounds/" + src + ".mp3", 'Failed to preload audio');
+      });
+      this.audios[src] = audio;
+      errorLogger.debug('Audio preloaded', { src });
+    } catch (e) {
+      errorLogger.logAudioError("sounds/" + src + ".mp3", e);
+    }
   },
   stopAll: function () {
     for (const eventListener of this.eventListeners) {
@@ -53,13 +107,26 @@ export const SoundUtils = {
   playSound: function (src) {
     let audio = this.getFromCache(src);
     if (!audio) {
-      audio = new Audio("sounds/" + src + ".mp3");
-      this.audios[src] = audio;
+      try {
+        audio = new Audio("sounds/" + src + ".mp3");
+        audio.addEventListener('error', () => {
+          errorLogger.logAudioError("sounds/" + src + ".mp3", 'Audio file not found or failed to load');
+        });
+        this.audios[src] = audio;
+      } catch (e) {
+        errorLogger.logAudioError("sounds/" + src + ".mp3", e);
+        return null;
+      }
     }
     try {
-      audio.play();
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(e => {
+          errorLogger.logAudioError("sounds/" + src + ".mp3", e);
+        });
+      }
     } catch (e) {
-      console.error("no audio file for: sounds/" + src + ".mp3");
+      errorLogger.logAudioError("sounds/" + src + ".mp3", e);
     }
     return audio;
   },
@@ -90,28 +157,55 @@ export const SoundUtils = {
     return this.playSound(this.getCharacterPath(character));
   },
   getCharacterPath: function (character) {
+    const lang = this.getLanguagePath();
+    // For English and Filipino, use letters-numbers folder
+    if (lang === 'english' || lang === 'filipino') {
+      return lang + "/letters-numbers/" + character.toLowerCase();
+    }
+    // For German, keep old structure
     return "de/characters/" + character.toLowerCase();
   },
   playExplanation: function (file) {
-    return this.playSound("de/explanations/" + file);
+    const lang = this.getLanguagePath();
+    return this.playSound(lang + "/explanation/" + file);
+  },
+  playHelper: function (file) {
+    const lang = this.getLanguagePath();
+    return this.playSound(lang + "/helpers/" + file);
   },
   play: function (src) {
-    // helper function to handle exception, to avoid crashing if the user of the new SoundLib tries to play a sound that is not properly setup.
     if (!src) {
-      console.error(
-        "No sound source provided, check if the input was extracted from SoundLib correctly."
-      );
+      errorLogger.logWarning("No sound source provided", { src });
       return;
     }
     try {
       src.play();
     } catch (e) {
-      console.error("Error playing sound: " + src, e);
+      errorLogger.logError("Sound Play Error", { src, error: e });
     }
   },
-  setVoice(voice) {
-    this.selectedVoice = voice;
-    localStorage.setItem("selectedVoice", JSON.stringify(voice));
+  async setVoice(voice) {
+    try {
+      this.selectedVoice = voice;
+      
+      // Save to database
+      const token = localStorage.getItem('token');
+      if (token) {
+        const axios = (await import('axios')).default;
+        const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+        await axios.post(
+          `${API_URL}/preferences/voice`,
+          { voice: { id: voice.id, name: voice.name } },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+      
+      // Fallback to localStorage
+      localStorage.setItem("selectedVoice", JSON.stringify(voice));
+      errorLogger.logInfo("Voice changed", { voice: voice.name });
+    } catch (e) {
+      errorLogger.logError("Voice Change Error", { voice, error: e });
+    }
   },
   useBoy0Voice() {
     this.setVoice(this.voices.boy0);
@@ -136,30 +230,83 @@ class Sound {
 class KidSound extends Sound {
   constructor(group, id) {
     super(group, id);
-    let language = "de/";
-    SoundUtils.preload(language + this.group + "/boy0/" + this.id);
-    SoundUtils.preload(language + this.group + "/girl0/" + this.id);
+    try {
+      // Preload for all languages
+      const languages = ['de', 'english', 'filipino'];
+      languages.forEach(lang => {
+        if (lang === 'de') {
+          SoundUtils.preload(lang + "/" + this.group + "/boy0/" + this.id);
+          SoundUtils.preload(lang + "/" + this.group + "/girl0/" + this.id);
+        } else {
+          // English and Filipino use different folder structure
+          const folder = this.group === 'characters' ? 'letters-numbers' : 
+                        this.group === 'words' ? 'words' : this.group;
+          SoundUtils.preload(lang + "/" + folder + "/" + this.id);
+        }
+      });
+    } catch (e) {
+      errorLogger.logError("KidSound Constructor Error", { group, id, error: e });
+    }
   }
 
   play() {
-    let language = "de/";
-    let path =
-      language + this.group + "/" + SoundUtils.selectedVoice.id + "/" + this.id;
-    SoundUtils.playSound(path);
+    try {
+      const lang = SoundUtils.getLanguagePath();
+      let path;
+      
+      if (lang === 'de') {
+        // German uses old structure with voice selection
+        path = lang + "/" + this.group + "/" + SoundUtils.selectedVoice.id + "/" + this.id;
+      } else {
+        // English and Filipino use new structure
+        const folder = this.group === 'characters' ? 'letters-numbers' : 
+                      this.group === 'words' ? 'words' : this.group;
+        path = lang + "/" + folder + "/" + this.id;
+      }
+      
+      SoundUtils.playSound(path);
+    } catch (e) {
+      errorLogger.logError("KidSound Play Error", { group: this.group, id: this.id, error: e });
+    }
   }
 }
 
 class DadSound extends Sound {
   constructor(group, id) {
     super(group, id);
-    let language = "de/";
-    SoundUtils.preload(language + this.group + "/dad/" + this.id);
+    try {
+      // Preload for all languages
+      const languages = ['de', 'english', 'filipino'];
+      languages.forEach(lang => {
+        if (lang === 'de') {
+          SoundUtils.preload(lang + "/" + this.group + "/dad/" + this.id);
+        } else {
+          // English and Filipino use words folder
+          SoundUtils.preload(lang + "/words/" + this.id);
+        }
+      });
+    } catch (e) {
+      errorLogger.logError("DadSound Constructor Error", { group, id, error: e });
+    }
   }
 
   play() {
-    let language = "de/";
-    let path = language + this.group + "/dad/" + this.id;
-    SoundUtils.playSound(path);
+    try {
+      const lang = SoundUtils.getLanguagePath();
+      let path;
+      
+      if (lang === 'de') {
+        // German uses old structure
+        path = lang + "/" + this.group + "/dad/" + this.id;
+      } else {
+        // English and Filipino use words folder
+        path = lang + "/words/" + this.id;
+      }
+      
+      SoundUtils.playSound(path);
+    } catch (e) {
+      errorLogger.logError("DadSound Play Error", { group: this.group, id: this.id, error: e });
+    }
   }
 }
 

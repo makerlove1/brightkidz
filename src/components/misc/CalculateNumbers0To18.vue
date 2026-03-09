@@ -74,6 +74,7 @@ import { numberConfigs } from "../mixins/numberConfigs";
 import ErrorAnimation from "../ErrorAnimation";
 import { CharacterUtils } from "../utils/CharacterUtils";
 import { dragDrop } from "../mixins/dragDrop";
+import { gameLevelService } from "@/services/gameLevelService";
 
 export default {
   name: "CalculateNumbers0To18",
@@ -103,37 +104,28 @@ export default {
       finishedRounds: 0,
       previousLevelDisabled: true,
       nextLevelDisabled: true,
+      gameIdentifier: 'calculateNumbers0To18'
     };
   },
-  mounted: function () {
-    if (localStorage.calculateNumbers0To18_selectedLevel) {
-      this.selectedLevel = Number.parseInt(
-        localStorage.calculateNumbers0To18_selectedLevel
-      );
-    } else {
-      localStorage.calculateNumbers0To18_selectedLevel = this.selectedLevel;
-    }
-
-    if (localStorage.calculateNumbers0To18_unlockedLevels) {
-      this.unlockedLevels = Number.parseInt(
-        localStorage.calculateNumbers0To18_unlockedLevels
-      );
-    } else {
-      localStorage.calculateNumbers0To18_unlockedLevels = this.unlockedLevels;
-    }
+  async mounted() {
+    // Load game level from database
+    const levelData = await gameLevelService.getGameLevel(this.gameIdentifier);
+    this.selectedLevel = levelData.selectedLevel;
+    this.unlockedLevels = levelData.unlockedLevels;
+    
     SoundUtils.playExplanation(this.explanation);
     this.restart();
   },
   watch: {
     selectedLevel: {
-      handler(newValue) {
-        localStorage.calculateNumbers0To18_selectedLevel = newValue;
+      async handler(newValue) {
+        await gameLevelService.saveGameLevel(this.gameIdentifier, newValue, this.unlockedLevels);
       },
       deep: true,
     },
     unlockedLevels: {
-      handler(newValue) {
-        localStorage.calculateNumbers0To18_unlockedLevels = newValue;
+      async handler(newValue) {
+        await gameLevelService.saveGameLevel(this.gameIdentifier, this.selectedLevel, newValue);
       },
       deep: true,
     },

@@ -1,0 +1,50 @@
+╔════════════════════════════════════════════════════════════╗
+║     AI VOICE TRANSLATION - QUICK START GUIDE              ║
+║     English & Filipino Voice Generation                   ║
+╚════════════════════════════════════════════════════════════╝
+
+📍 LOCATION: edukiz/scripts/
+
+🚀 WINDOWS USERS (EASIEST):
+   1. Open Command Prompt
+   2. cd C:\Users\Michael\OneDrive\Desktop\copm\edukiz\scripts
+   3. generate_all_voices.bat
+   4. Wait 5-10 minutes
+   5. Done!
+
+🐍 PYTHON USERS:
+   1. cd edukiz/scripts
+   2. pip install gtts
+   3. python generate_all_voices.py
+   4. Done!
+
+📊 WHAT GETS GENERATED:
+   ✓ 94 files - Letters & Numbers (A-Z, 0-20)
+   ✓ 10 files - Explanations
+   ✓ 16 files - Helpers
+   ✓ 200+ files - Words (animals, colors, objects)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TOTAL: 320+ MP3 files (English + Filipino)
+
+📁 OUTPUT FOLDERS:
+   public/sounds/english/letters-numbers/
+   public/sounds/english/explanation/
+   public/sounds/english/helpers/
+   public/sounds/english/words/
+   
+   public/sounds/filipino/letters-numbers/
+   public/sounds/filipino/explanation/
+   public/sounds/filipino/helpers/
+   public/sounds/filipino/words/
+
+⚡ REQUIREMENTS:
+   • Python 3.7+
+   • Internet connection
+   • 5-10 minutes
+
+📖 MORE INFO:
+   See: VOICE_GENERATION_GUIDE.md
+
+═══════════════════════════════════════════════════════════
+Ready? Run: generate_all_voices.bat
+═══════════════════════════════════════════════════════════

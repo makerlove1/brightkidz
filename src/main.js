@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import { createRouter, createWebHashHistory } from "vue-router";
 import "@fortawesome/fontawesome-free/css/all.css";
+import "./assets/styles/global.scss";
 import mitt from "mitt";
 
 import Home from "./components/Home.vue";
@@ -14,19 +15,37 @@ import DDCharacters from "./components/drag_drop/DDCharacters";
 import MiscNavPage from "./components/misc/MiscNavPage";
 import CalculateNumbers0To18 from "./components/misc/CalculateNumbers0To18";
 import TextToSppech from "./components/misc/TextToSpeech";
+import QuizGame from "./components/misc/QuizGame";
+import Login from "./components/Login.vue";
+import AdminDashboard from "./components/AdminDashboard.vue";
+import UserProfile from "./components/UserProfile.vue";
 import "./registerServiceWorker";
-
-if (!localStorage.rewards) {
-  localStorage.rewards = 0;
-}
+import { authService } from "./services/authService";
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     {
       path: "/",
+      name: "Login",
+      component: Login,
+    },
+    {
+      path: "/home",
       name: "Home",
       component: Home,
+    },
+    {
+      path: "/admin",
+      name: "AdminDashboard",
+      component: AdminDashboard,
+      meta: { requiresAuth: true, requiresAdmin: true },
+    },
+    {
+      path: "/profile",
+      name: "UserProfile",
+      component: UserProfile,
+      meta: { requiresAuth: true },
     },
     {
       path: "/memory",
@@ -74,13 +93,29 @@ const router = createRouter({
       component: TextToSppech,
     },
     {
-      path: "/github",
-      name: "github",
-      beforeEnter() {
-        location.href = "https://github.com/timmalich/edukiz";
-      },
+      path: "/misc/quiz",
+      name: "QuizGame",
+      component: QuizGame,
     },
   ],
+});
+
+// Navigation guard for authentication
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
+  const isAuthenticated = authService.isAuthenticated();
+  
+  // If trying to access login page while authenticated, redirect to home
+  if (to.path === '/' && isAuthenticated) {
+    next('/home');
+  } else if (requiresAuth && !isAuthenticated) {
+    next('/');
+  } else if (requiresAdmin && !authService.isAdmin()) {
+    next('/home');
+  } else {
+    next();
+  }
 });
 
 const emitter = mitt();

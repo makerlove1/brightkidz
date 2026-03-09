@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star System Flow Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🌟 Star System Flow Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Check Authentication Status</h2>
+        <button onclick="checkAuth()">Check Auth</button>
+        <div id="auth-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Get Current Level</h2>
+        <button onclick="getCurrentLevel()">Get Level</button>
+        <div id="level-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Add Stars</h2>
+        <input type="number" id="star-amount" value="3" min="1" max="10" style="padding: 8px; margin-right: 10px;">
+        <button onclick="addStars()">Add Stars</button>
+        <div id="add-stars-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Test Event Emitter</h2>
+        <p>This test requires the Vue app to be running. Open the app in another tab first.</p>
+        <button onclick="testEventEmitter()">Test Event</button>
+        <div id="event-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        function checkAuth() {
+            const result = document.getElementById('auth-result');
+            const token = localStorage.getItem('token');
+            const guestMode = localStorage.getItem('guestMode');
+            const username = localStorage.getItem('username');
+            
+            if (guestMode === 'true') {
+                result.className = 'result error';
+                result.textContent = '❌ Guest Mode Active\n\nYou are in guest mode. Stars will NOT be saved.\nPlease log in with a real account to track progress.';
+            } else if (!token) {
+                result.className = 'result error';
+                result.textContent = '❌ Not Logged In\n\nNo authentication token found.\nPlease log in to the app first.';
+            } else {
+                result.className = 'result success';
+                result.textContent = `✅ Logged In\n\nUsername: ${username || 'Unknown'}\nToken: ${token.substring(0, 20)}...\n\nReady to track stars!`;
+            }
+        }
+
+        async function getCurrentLevel() {
+            const result = document.getElementById('level-result');
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                result.className = 'result error';
+                result.textContent = '❌ No token found. Please log in first.';
+                return;
+            }
+
+            try {
+                result.className = 'result info';
+                result.textContent = 'Loading...';
+                
+                const response = await fetch(`${API_URL}/levels/current`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                result.className = 'result success';
+                result.textContent = `✅ Current Level Data:\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = `❌ Error:\n\n${error.message}`;
+            }
+        }
+
+        async function addStars() {
+            const result = document.getElementById('add-stars-result');
+            const token = localStorage.getItem('token');
+            const stars = parseInt(document.getElementById('star-amount').value);
+            
+            if (!token) {
+                result.className = 'result error';
+                result.textContent = '❌ No token found. Please log in first.';
+                return;
+            }
+
+            if (!stars || stars < 1) {
+                result.className = 'result error';
+                result.textContent = '❌ Invalid star amount. Please enter a number between 1 and 10.';
+                return;
+            }
+
+            try {
+                result.className = 'result info';
+                result.textContent = `Adding ${stars} stars...`;
+                
+                const response = await fetch(`${API_URL}/levels/add-stars`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ stars })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`HTTP ${response.status}: ${JSON.stringify(errorData)}`);
+                }
+
+                const data = await response.json();
+                result.className = 'result success';
+                
+                let message = `✅ Stars Added Successfully!\n\n`;
+                message += `Stars Added: ${stars}\n`;
+                message += `Current Level: ${data.level.currentLevel}\n`;
+                message += `Current Stars: ${data.level.currentStars}/${data.level.starsToNextLevel}\n`;
+                message += `Total Stars Earned: ${data.level.totalStarsEarned}\n`;
+                message += `Progress: ${data.level.progressPercentage}%\n`;
+                
+                if (data.leveledUp) {
+                    message += `\n🎉 LEVEL UP! You gained ${data.levelsGained.length} level(s)!\n`;
+                    data.levelsGained.forEach(lg => {
+                        message += `\nLevel ${lg.level}: ${lg.reward.title} ${lg.reward.emoji}\n`;
+                    });
+                }
+                
+                result.textContent = message;
+                
+                // Refresh level display
+                setTimeout(getCurrentLevel, 500);
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = `❌ Error:\n\n${error.message}`;
+            }
+        }
+
+        function testEventEmitter() {
+            const result = document.getElementById('event-result');
+            result.className = 'result info';
+            result.textContent = 'This test only works when the Vue app is running.\n\nOpen the app in another tab, then check the browser console for event logs.';
+        }
+
+        // Auto-check auth on load
+        window.onload = checkAuth;
+    </script>
+</body>
+</html>
