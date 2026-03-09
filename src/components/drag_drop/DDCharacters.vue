@@ -85,7 +85,9 @@ export default {
     this.restart();
   },
   mounted: function () {
-    this.initDragDrop(true);
+    this.$nextTick(() => {
+      this.initDragDrop(true);
+    });
   },
   unmounted: function () {
     SoundUtils.stopAll();
@@ -170,6 +172,10 @@ export default {
       }
       ArrayUtils.shuffleArray(this.droppableCharacters);
       this.resetGameComponents();
+      // Reinitialize drag and drop after DOM updates
+      this.$nextTick(() => {
+        this.initDragDrop(true);
+      });
     },
     resetGameComponents: function () {
       this.resetDragAndDropSuccessions();

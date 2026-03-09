@@ -75,7 +75,9 @@ export default {
     );
   },
   mounted: function () {
-    this.initDragDrop(false);
+    this.$nextTick(() => {
+      this.initDragDrop(false);
+    });
   },
   unmounted: function () {
     SoundUtils.stopAll();
@@ -190,6 +192,10 @@ export default {
       }
       ArrayUtils.shuffleArray(this.draggableCharacters);
       this.resetGameComponents();
+      // Reinitialize drag and drop after DOM updates
+      this.$nextTick(() => {
+        this.initDragDrop(false);
+      });
       if (!muteWordSound) {
         this.playHelpWord();
       }

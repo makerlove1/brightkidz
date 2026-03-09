@@ -130,10 +130,10 @@ export default {
       deep: true,
     },
   },
-  created: function () {
-  },
   mounted: function () {
-    this.initDragDrop(false);
+    this.$nextTick(() => {
+      this.initDragDrop(false);
+    });
   },
   unmounted: function () {
     SoundUtils.stopAll();
@@ -407,6 +407,10 @@ export default {
       this.choices = ArrayUtils.shuffleArray(this.choices);
 
       ArrayUtils.shuffleArray(this.choices);
+      // Reinitialize drag and drop after DOM updates
+      this.$nextTick(() => {
+        this.initDragDrop(false);
+      });
     },
     resetGameComponents: function () {
       this.resetDragAndDropSuccessions();
