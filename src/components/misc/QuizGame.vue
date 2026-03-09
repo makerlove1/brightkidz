@@ -403,40 +403,46 @@ export default {
                        this.currentQuestion.type === 'letter' ? 'letters' : 'numbers';
       this.bkt.updateKnowledge(skillType, this.isCorrect);
       
-      // First, play the sound of the clicked choice
-      this.playChoiceSound(choice);
-      
-      // Then play feedback sound after a short delay
-      setTimeout(() => {
-        if (this.isCorrect) {
-          this.score++;
-          // Try to play success sound
-          try {
-            // Try direct audio play as fallback
-            const successAudio = new Audio('/sounds/success1.mp3');
-            successAudio.play().catch(e => {
-              errorLogger.logError('Failed to play success sound', e);
-            });
-          } catch (e) {
+      // Play immediate feedback sound
+      if (this.isCorrect) {
+        this.score++;
+        // Try to play success sound
+        try {
+          // Try direct audio play as fallback
+          const successAudio = new Audio('/sounds/success1.mp3');
+          successAudio.play().catch(e => {
             errorLogger.logError('Failed to play success sound', e);
-          }
-          // Try to emit reward event if emitter is available
-          if (this.emitter) {
-            this.emitter.emit("showReward", 1);
-          }
-        } else {
-          // Try to play error sound
-          try {
-            // Try direct audio play as fallback
-            const errorAudio = new Audio('/sounds/error1.mp3');
-            errorAudio.play().catch(e => {
-              errorLogger.logError('Failed to play error sound', e);
-            });
-          } catch (e) {
-            errorLogger.logError('Failed to play error sound', e);
-          }
+          });
+        } catch (e) {
+          errorLogger.logError('Failed to play success sound', e);
         }
-      }, 800);
+        // Try to emit reward event if emitter is available
+        if (this.emitter) {
+          this.emitter.emit("showReward", 1);
+        }
+      } else {
+        // Try to play error sound
+        try {
+          // Try direct audio play as fallback
+          const errorAudio = new Audio('/sounds/error1.mp3');
+          errorAudio.play().catch(e => {
+            errorLogger.logError('Failed to play error sound', e);
+          });
+        } catch (e) {
+          errorLogger.logError('Failed to play error sound', e);
+        }
+      }
+      
+      // Always try to play the correct answer sound after feedback
+      if (this.currentQuestion.sound) {
+        setTimeout(() => {
+          try {
+            this.currentQuestion.sound.play();
+          } catch (e) {
+            errorLogger.logError('Failed to play correct answer sound', e);
+          }
+        }, 600);
+      }
       
       // Auto advance after delay (for both correct and incorrect)
       setTimeout(() => {
@@ -500,37 +506,6 @@ export default {
         [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
       }
       return newArray;
-    },
-    
-    playChoiceSound(choice) {
-      try {
-        // For object questions, choice is an object with key property
-        if (this.currentQuestion.type === 'object' && typeof choice === 'object' && choice.key) {
-          // Play the sound for the object key
-          const soundKey = choice.key;
-          if (SoundLib[soundKey]) {
-            SoundLib[soundKey].play();
-          }
-        }
-        // For letter questions
-        else if (this.currentQuestion.type === 'letter' && typeof choice === 'string') {
-          // Play the letter sound
-          const soundKey = choice.toLowerCase();
-          if (SoundLib[soundKey]) {
-            SoundLib[soundKey].play();
-          }
-        }
-        // For number questions
-        else if (this.currentQuestion.type === 'number' && typeof choice === 'string') {
-          // Play the number sound
-          const num = parseInt(choice);
-          if (SoundLib[num]) {
-            SoundLib[num].play();
-          }
-        }
-      } catch (e) {
-        errorLogger.logError('Failed to play choice sound', e);
-      }
     }
   }
 };
