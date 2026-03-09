@@ -400,26 +400,20 @@ export default {
                        this.currentQuestion.type === 'letter' ? 'letters' : 'numbers';
       this.bkt.updateKnowledge(skillType, this.isCorrect);
       
+      // Play immediate feedback sound
       if (this.isCorrect) {
         this.score++;
         SoundLib.success1.play();
         this.emitter.emit("showReward", 1);
-        
-        // Play the sound for the correct answer
-        if (this.currentQuestion.sound) {
-          setTimeout(() => {
-            this.currentQuestion.sound.play();
-          }, 500);
-        }
       } else {
         SoundLib.error1.play();
-        
-        // Play the sound for the correct answer even when wrong
-        if (this.currentQuestion.sound) {
-          setTimeout(() => {
-            this.currentQuestion.sound.play();
-          }, 800);
-        }
+      }
+      
+      // Always play the correct answer sound after feedback
+      if (this.currentQuestion.sound) {
+        setTimeout(() => {
+          this.currentQuestion.sound.play();
+        }, 600);
       }
       
       // Auto advance after delay (for both correct and incorrect)
@@ -430,7 +424,7 @@ export default {
           // Show mastery summary at end
           this.showMasteryPanel = true;
         }
-      }, 2000);
+      }, 2500);
       
       errorLogger.logInfo('Quiz answer selected', {
         question: this.currentQuestionIndex,
