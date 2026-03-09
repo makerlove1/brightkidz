@@ -43,6 +43,7 @@
 import MemoryCard from "./MemoryCard.vue";
 import { SoundUtils } from "../utils/SoundUtils";
 import Game from "../Game.vue";
+import { ArrayUtils } from "../utils/ArrayUtils";
 import ErrorAnimation from "../ErrorAnimation.vue";
 
 export default {
