@@ -411,19 +411,26 @@ export default {
             this.currentQuestion.sound.play();
           }, 500);
         }
-        
-        // Auto advance after 2 seconds
-        setTimeout(() => {
-          if (this.currentQuestionIndex < this.totalQuestions - 1) {
-            this.nextQuestion();
-          } else {
-            // Show mastery summary at end
-            this.showMasteryPanel = true;
-          }
-        }, 2000);
       } else {
         SoundLib.error1.play();
+        
+        // Play the sound for the correct answer even when wrong
+        if (this.currentQuestion.sound) {
+          setTimeout(() => {
+            this.currentQuestion.sound.play();
+          }, 800);
+        }
       }
+      
+      // Auto advance after delay (for both correct and incorrect)
+      setTimeout(() => {
+        if (this.currentQuestionIndex < this.totalQuestions - 1) {
+          this.nextQuestion();
+        } else {
+          // Show mastery summary at end
+          this.showMasteryPanel = true;
+        }
+      }, 2000);
       
       errorLogger.logInfo('Quiz answer selected', {
         question: this.currentQuestionIndex,
