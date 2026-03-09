@@ -9,17 +9,18 @@
     "lint": "eslint src --ext .js,.vue --fix"
   },
   "dependencies": {
-    "vue": "^3.5.24",
-    "vue-router": "^4.6.3",
+    "@interactjs/interactjs": "^1.10.11",
     "axios": "^1.13.6",
     "mitt": "^3.0.0",
-    "@interactjs/interactjs": "^1.10.11"
+    "vue": "^3.5.24",
+    "vue-router": "^4.6.3"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",
-    "vite": "^5.0.0",
     "eslint": "^8.0.0",
-    "eslint-plugin-vue": "^9.0.0"
+    "eslint-plugin-vue": "^9.0.0",
+    "sass-embedded": "^1.97.3",
+    "vite": "^5.0.0"
   },
   "eslintConfig": {
     "root": true,

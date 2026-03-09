@@ -37,14 +37,14 @@
 </template>
 
 <script>
-import Game from "../Game";
-import ImageContainer from "../ImageContainer";
+import Game from "../Game.vue";
+import ImageContainer from "../ImageContainer.vue";
 import { dragDrop } from "../mixins/dragDrop";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { SoundLib, SoundUtils } from "../utils/SoundUtils";
 import { wordConfigs } from "../mixins/wordConfigs";
 import { CharacterUtils } from "../utils/CharacterUtils";
-import ErrorAnimation from "../ErrorAnimation";
+import ErrorAnimation from "../ErrorAnimation.vue";
 
 export default {
   name: "DDBuildWords",

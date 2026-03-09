@@ -89,8 +89,8 @@
 </template>
 
 <script>
-import Game from "../Game";
-import ImageContainer from "../ImageContainer";
+import Game from "../Game.vue";
+import ImageContainer from "../ImageContainer.vue";
 import { characterConfigs } from "../mixins/characterConfigs";
 import { SoundUtils } from "../utils/SoundUtils";
 

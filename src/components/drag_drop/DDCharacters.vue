@@ -32,13 +32,13 @@
 </template>
 
 <script>
-import Game from "../Game";
-import ImageContainer from "../ImageContainer";
+import Game from "../Game.vue";
+import ImageContainer from "../ImageContainer.vue";
 import { dragDrop } from "../mixins/dragDrop";
 import { characterConfigs } from "../mixins/characterConfigs";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { SoundLib, SoundUtils } from "../utils/SoundUtils";
-import ErrorAnimation from "../ErrorAnimation";
+import ErrorAnimation from "../ErrorAnimation.vue";
 
 export default {
   name: "DDCharacters",

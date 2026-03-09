@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import NavPage from "../NavPage";
-import LinkTile from "../LinkTile";
+import NavPage from "../NavPage.vue";
+import LinkTile from "../LinkTile.vue";
 import translationMixin from "@/mixins/translationMixin";
 
 export default {

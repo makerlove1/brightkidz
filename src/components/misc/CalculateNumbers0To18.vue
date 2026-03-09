@@ -65,13 +65,13 @@
 </template>
 
 <script>
-import Game from "../Game";
-import ImageContainer from "../ImageContainer";
+import Game from "../Game.vue";
+import ImageContainer from "../ImageContainer.vue";
 import { ArrayUtils } from "../utils/ArrayUtils";
 import { SoundUtils } from "../utils/SoundUtils";
 import { SoundLib } from "../utils/SoundUtils";
 import { numberConfigs } from "../mixins/numberConfigs";
-import ErrorAnimation from "../ErrorAnimation";
+import ErrorAnimation from "../ErrorAnimation.vue";
 import { CharacterUtils } from "../utils/CharacterUtils";
 import { dragDrop } from "../mixins/dragDrop";
 import { gameLevelService } from "@/services/gameLevelService";
