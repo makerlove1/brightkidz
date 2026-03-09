@@ -1,4 +1,4 @@
-import interact from "@interactjs/interactjs";
+import interact from "interactjs";
 
 export const dragDrop = {
   unmounted() {
