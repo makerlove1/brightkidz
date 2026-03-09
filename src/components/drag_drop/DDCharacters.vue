@@ -83,6 +83,8 @@ export default {
   created: function () {
     SoundUtils.playExplanation(this.explanation);
     this.restart();
+  },
+  mounted: function () {
     this.initDragDrop(true);
   },
   unmounted: function () {

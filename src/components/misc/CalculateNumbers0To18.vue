@@ -131,6 +131,8 @@ export default {
     },
   },
   created: function () {
+  },
+  mounted: function () {
     this.initDragDrop(false);
   },
   unmounted: function () {
