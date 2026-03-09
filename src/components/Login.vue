@@ -2,7 +2,7 @@
   <div class="login-container">
     <div class="login-card">
       <div class="logo-section">
-        <img src="img/logo.svg" class="login-logo" alt="BrightKidz logo" />
+        <img src="/img/logo.svg" class="login-logo" alt="BrightKidz logo" />
         <h1 class="app-name">BrightKidz</h1>
       </div>
       

@@ -32,7 +32,7 @@
       <ImageContainer
         class="drop-element"
         key="equals"
-        src="img/characters/=.svg"
+        src="/img/characters/=.svg"
       ></ImageContainer>
     </div>
     <div

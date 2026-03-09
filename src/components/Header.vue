@@ -2,7 +2,7 @@
   <div class="header">
     <div class="header-left">
         <div class="logo-wrap">
-          <img src="img/logo.svg" class="site-logo no-drag" alt="BrightKidz logo" />
+          <img src="/img/logo.svg" class="site-logo no-drag" alt="BrightKidz logo" />
         </div>
         <div v-if="navBackPath" @click="navBack" class="game-button">
         <em class="fas fa-reply"></em>

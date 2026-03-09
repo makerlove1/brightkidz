@@ -44,7 +44,7 @@
       v-bind:class="[
         { 'voiceAnimationBoy-show': isShowBoyVoiceAnimationActive },
       ]"
-      src="img/boy_happy.png"
+      src="/img/boy_happy.png"
       class="no-drag"
       alt="Voice animation boy"
     />
@@ -53,7 +53,7 @@
       v-bind:class="[
         { 'voiceAnimationGirl-show': isShowGirlVoiceAnimationActive },
       ]"
-      src="img/girl_happy.png"
+      src="/img/girl_happy.png"
       class="no-drag"
       alt="Voice animation girl"
     />

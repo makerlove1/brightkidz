@@ -11,7 +11,7 @@
       <div>
         <img
           class="back-face no-drag"
-          src="img/cat_wallpaper.svg"
+          src="/img/cat_wallpaper.svg"
           alt="back face"
           v-bind:class="[{ flipped: isFlipped }]"
         />

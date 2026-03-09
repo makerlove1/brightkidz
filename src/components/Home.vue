@@ -3,19 +3,19 @@
     <LinkTile
       :title="t('memory')"
       nav-path="/memory"
-      src="img/games/MemoryBackface.png"
+      src="/img/games/MemoryBackface.png"
       :alt="t('memoryAlt')"
     />
     <LinkTile
       :title="t('dragdrop')"
       nav-path="/dragdrop"
-      src="img/games/DD.png"
+      src="/img/games/DD.png"
       :alt="t('dragdropAlt')"
     />
     <LinkTile
       :title="t('misc')"
       nav-path="/misc"
-      src="img/games/Calculate.png"
+      src="/img/games/Calculate.png"
       :alt="t('miscAlt')"
     />
   </NavPage>

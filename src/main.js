@@ -1,25 +1,23 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import { createRouter, createWebHashHistory } from "vue-router";
-import "@fortawesome/fontawesome-free/css/all.css";
 import "./assets/styles/global.scss";
 import mitt from "mitt";
 
 import Home from "./components/Home.vue";
 import Memory from "./components/memory/MemoryNavPage.vue";
 import MemoryAnimals from "./components/memory/MemoryAnimals.vue";
-import MemoryCharacters from "./components/memory/MemoryCharacters";
-import DDNavPage from "./components/drag_drop/DDNavPage";
-import DDBuildWordsGame from "./components/drag_drop/DDBuildWordsGame";
-import DDCharacters from "./components/drag_drop/DDCharacters";
-import MiscNavPage from "./components/misc/MiscNavPage";
-import CalculateNumbers0To18 from "./components/misc/CalculateNumbers0To18";
-import TextToSppech from "./components/misc/TextToSpeech";
-import QuizGame from "./components/misc/QuizGame";
+import MemoryCharacters from "./components/memory/MemoryCharacters.vue";
+import DDNavPage from "./components/drag_drop/DDNavPage.vue";
+import DDBuildWordsGame from "./components/drag_drop/DDBuildWordsGame.vue";
+import DDCharacters from "./components/drag_drop/DDCharacters.vue";
+import MiscNavPage from "./components/misc/MiscNavPage.vue";
+import CalculateNumbers0To18 from "./components/misc/CalculateNumbers0To18.vue";
+import TextToSppech from "./components/misc/TextToSpeech.vue";
+import QuizGame from "./components/misc/QuizGame.vue";
 import Login from "./components/Login.vue";
 import AdminDashboard from "./components/AdminDashboard.vue";
 import UserProfile from "./components/UserProfile.vue";
-import "./registerServiceWorker";
 import { authService } from "./services/authService";
 
 const router = createRouter({
