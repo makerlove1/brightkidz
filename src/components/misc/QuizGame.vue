@@ -10,7 +10,7 @@
     @restart="restart"
     @next="nextQuestion"
   >
-    <div class="quiz-container">
+    <div v-if="questions.length > 0 && currentQuestion.type" class="quiz-container">
       <!-- Question Section -->
       <div class="question-section">
         <div class="question-prompt">
@@ -119,6 +119,15 @@
         </div>
       </transition>
     </div>
+    
+    <!-- Loading State -->
+    <div v-else class="loading-container">
+      <div class="loading-spinner">
+        <em class="fas fa-spinner fa-spin fa-3x"></em>
+      </div>
+      <p>Loading quiz questions...</p>
+    </div>
+    
   </Game>
 </template>
 
