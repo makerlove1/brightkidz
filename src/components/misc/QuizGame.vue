@@ -160,17 +160,8 @@ export default {
       return this.questions[this.currentQuestionIndex] || {};
     }
   },
-  async mounted() {
-    try {
-      // Initialize BKT model if it has an initialize method
-      if (this.bkt && typeof this.bkt.initialize === 'function') {
-        await this.bkt.initialize();
-      }
-    } catch (error) {
-      console.error('BKT initialization failed:', error);
-      // Continue anyway, BKT will use fallback
-    }
-    
+  mounted() {
+    // Generate questions immediately (BKT model initializes itself)
     this.generateQuestions();
     
     // Subscribe to language changes and regenerate questions
@@ -188,28 +179,22 @@ export default {
       this.questions = [];
       
       try {
-        // Check if BKT model is available and has skills initialized
-        if (this.bkt && this.bkt.skills) {
-          // Use BKT to determine question distribution
-          const recommendedCounts = this.bkt.getRecommendedQuestionCount(this.totalQuestions);
-          
-          const questionTypes = [
-            { type: 'object', count: recommendedCounts.objects },
-            { type: 'letter', count: recommendedCounts.letters },
-            { type: 'number', count: recommendedCounts.numbers }
-          ];
-          
-          errorLogger.logInfo('BKT Question Distribution', recommendedCounts);
-          
-          questionTypes.forEach(({ type, count }) => {
-            for (let i = 0; i < count; i++) {
-              this.questions.push(this.createQuestion(type));
-            }
-          });
-        } else {
-          // BKT not available, use equal distribution
-          throw new Error('BKT model not initialized');
-        }
+        // Use BKT to determine question distribution
+        const recommendedCounts = this.bkt.getRecommendedQuestionCount(this.totalQuestions);
+        
+        const questionTypes = [
+          { type: 'object', count: recommendedCounts.objects },
+          { type: 'letter', count: recommendedCounts.letters },
+          { type: 'number', count: recommendedCounts.numbers }
+        ];
+        
+        errorLogger.logInfo('BKT Question Distribution', recommendedCounts);
+        
+        questionTypes.forEach(({ type, count }) => {
+          for (let i = 0; i < count; i++) {
+            this.questions.push(this.createQuestion(type));
+          }
+        });
       } catch (error) {
         // Fallback: equal distribution if BKT fails
         errorLogger.logError('BKT question distribution failed, using fallback', error);
@@ -413,35 +398,17 @@ export default {
       // Update BKT model with the answer
       const skillType = this.currentQuestion.type === 'object' ? 'objects' : 
                        this.currentQuestion.type === 'letter' ? 'letters' : 'numbers';
-      if (this.bkt && typeof this.bkt.updateKnowledge === 'function') {
-        this.bkt.updateKnowledge(skillType, this.isCorrect);
-      }
+      this.bkt.updateKnowledge(skillType, this.isCorrect);
       
       if (this.isCorrect) {
         this.score++;
-        try {
-          SoundLib.success1.play();
-        } catch (error) {
-          console.error('Error playing success sound:', error);
-        }
-        
-        // Try to emit reward event if emitter exists
-        try {
-          if (this.emitter && typeof this.emitter.emit === 'function') {
-            this.emitter.emit("showReward", 1);
-          }
-        } catch (error) {
-          console.error('Error emitting reward event:', error);
-        }
+        SoundLib.success1.play();
+        this.emitter.emit("showReward", 1);
         
         // Play the sound for the correct answer
         if (this.currentQuestion.sound) {
           setTimeout(() => {
-            try {
-              this.currentQuestion.sound.play();
-            } catch (error) {
-              console.error('Error playing question sound:', error);
-            }
+            this.currentQuestion.sound.play();
           }, 500);
         }
         
@@ -455,18 +422,14 @@ export default {
           }
         }, 2000);
       } else {
-        try {
-          SoundLib.error1.play();
-        } catch (error) {
-          console.error('Error playing error sound:', error);
-        }
+        SoundLib.error1.play();
       }
       
       errorLogger.logInfo('Quiz answer selected', {
         question: this.currentQuestionIndex,
         type: this.currentQuestion.type,
         correct: this.isCorrect,
-        mastery: this.bkt && this.bkt.getMasteryPercent ? this.bkt.getMasteryPercent(skillType) + '%' : 'N/A'
+        mastery: this.bkt.getMasteryPercent(skillType) + '%'
       });
     },
     
