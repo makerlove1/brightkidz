@@ -315,7 +315,7 @@ export default {
     },
     
     createNumberQuestion() {
-      const numbers = Array.from({ length: 10 }, (_, i) => i);
+      const numbers = Array.from({ length: 10 }, (_, i) => i + 1); // 1-10 instead of 0-9
       const correct = numbers[Math.floor(Math.random() * numbers.length)];
       const wrongChoices = numbers
         .filter(n => n !== correct)
@@ -704,7 +704,8 @@ export default {
   
   &.disabled {
     opacity: 0.6;
-    cursor: not-allowed;
+    cursor: default;
+    pointer-events: none;
   }
   
   @media (max-width: 768px) {
