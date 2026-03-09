@@ -92,21 +92,28 @@ export default {
       maxLevel: 6,
       droppedNumbers: [],
       choices: [],
-      firstElement: {},
-      secondElement: {},
+      firstElement: null,
+      secondElement: null,
       solution: {
         numberConfigs: [],
       },
       isGameOver: false,
       isLevelFinished: false,
       explanation: "calculation0To18",
-      operator: CharacterUtils.createConfig("+"),
+      operator: null,
       finishedRounds: 0,
       previousLevelDisabled: true,
       nextLevelDisabled: true,
-      gameIdentifier: 'calculateNumbers0To18'
+      gameIdentifier: 'calculateNumbers0To18',
+      isInitialized: false
     };
   },
+  created() {
+    // Initialize with default values before template renders
+    this.operator = CharacterUtils.createConfig("+");
+    this.isInitialized = true;
+  },
+  
   async mounted() {
     // Load game level from database
     const levelData = await gameLevelService.getGameLevel(this.gameIdentifier);
@@ -115,6 +122,11 @@ export default {
     
     SoundUtils.playExplanation(this.explanation);
     this.restart();
+    
+    // Initialize drag and drop after DOM is ready
+    this.$nextTick(() => {
+      this.initDragDrop(false);
+    });
   },
   watch: {
     selectedLevel: {
@@ -129,11 +141,6 @@ export default {
       },
       deep: true,
     },
-  },
-  mounted: function () {
-    this.$nextTick(() => {
-      this.initDragDrop(false);
-    });
   },
   unmounted: function () {
     SoundUtils.stopAll();
