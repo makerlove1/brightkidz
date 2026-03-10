@@ -179,7 +179,7 @@ export const SoundUtils = {
       return;
     }
     try {
-      src.play();
+      return this.playSound(src);
     } catch (e) {
       errorLogger.logError("Sound Play Error", { src, error: e });
     }
