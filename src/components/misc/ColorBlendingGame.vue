@@ -168,8 +168,9 @@ export default {
         return;
       }
       
-      // Play the color sound when clicked
-      SoundUtils.play(`color/${color.id}`);
+      // Play the color sound when clicked using proper language path
+      const lang = SoundUtils.getLanguagePath();
+      SoundUtils.play(`${lang}/color/${color.id}`);
       
       // Add color to selection (max 2 colors)
       if (this.selectedColors.length < 2) {
@@ -194,7 +195,8 @@ export default {
       this.mixedColorResult = this.allColors.find(c => c.id === result.result);
       
       // Play the resulting color sound immediately when two colors are selected
-      SoundUtils.play(`color/${result.result}`);
+      const lang = SoundUtils.getLanguagePath();
+      SoundUtils.play(`${lang}/color/${result.result}`);
       
       // Show success
       setTimeout(() => {
