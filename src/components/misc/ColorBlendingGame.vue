@@ -1,235 +1,337 @@
 <template>
   <Game
     :is-highlight-animation-running="isGameOver"
-    nav-back-path="/dragdrop"
+    nav-back-path="/misc"
     :explanation="explanation"
     @previous="previousLevel"
     @restart="restart"
     :current-level="selectedLevel"
     @next="nextLevel"
   >
-    <div class="drop-section" v-bind:style="gridContainer">
-      <ImageContainer
-        v-for="charConfig in droppableCharacters"
-        :key="charConfig.character"
-        :data-identifier="charConfig.character"
-        :src="charConfig.image"
-        class="dropzone empty-droppable-element"
-      ></ImageContainer>
+    <div class="mixing-area">
+      <div class="drop-slots">
+        <div 
+          v-for="(slot, index) in dropSlots" 
+          :key="index"
+          class="drop-slot"
+          :data-slot-index="index"
+          :style="{ backgroundColor: slot.color ? slot.color.hex : '#f0f0f0' }"
+        >
+          <span v-if="!slot.color">Drop color here</span>
+          <span v-else>{{ slot.color.name.en }}</span>
+        </div>
+      </div>
+      
+      <div class="mixed-color-result" v-if="mixedColor">
+        <div 
+          class="result-color"
+          :style="{ backgroundColor: mixedColor }"
+        >
+          {{ mixedColorResult ? mixedColorResult.name.en : 'Mixed Color' }}
+        </div>
+      </div>
     </div>
-    <div class="spacer"></div>
-    <div class="drag-section" v-bind:style="gridContainer">
-      <ImageContainer
-        v-for="charConfig in draggableCharacters"
-        :key="charConfig.character"
-        :data-identifier="charConfig.character"
-        :src="charConfig.image"
-        class="draggable-element"
-      ></ImageContainer>
+    
+    <div class="color-palette">
+      <div 
+        v-for="color in colors" 
+        :key="color.id"
+        class="color-item"
+        :data-color-id="color.id"
+        :style="{ backgroundColor: color.hex }"
+        @click="playColorSound(color.id)"
+      >
+        <span>{{ color.name.en }}</span>
+        <span class="filipino-name">{{ color.name.fil }}</span>
+      </div>
     </div>
+    
     <ErrorAnimation ref="errorAnimation"></ErrorAnimation>
   </Game>
 </template>
 
 <script>
 import Game from "../Game.vue";
-import ImageContainer from "../ImageContainer.vue";
 import { dragDrop } from "../mixins/dragDrop";
-import { characterConfigs } from "../mixins/characterConfigs";
-import { ArrayUtils } from "../utils/ArrayUtils";
-import { SoundLib, SoundUtils } from "../utils/SoundUtils";
+import { SoundUtils } from "../utils/SoundUtils";
 import ErrorAnimation from "../ErrorAnimation.vue";
 
 export default {
-  name: "DDCharacters",
-  components: {
-    ImageContainer,
-    Game,
-    ErrorAnimation,
-  },
-  mixins: [dragDrop, characterConfigs],
+  name: "ColorBlendingGame",
+  components: { Game, ErrorAnimation },
+  mixins: [dragDrop],
   data() {
     return {
-      selectedLevel: 2,
+      selectedLevel: 0,
       levels: [
-        { elementAmount: 2 },
-        { elementAmount: 3 },
-        { elementAmount: 4 },
-        { elementAmount: 5 },
-        { elementAmount: 6 },
-        { elementAmount: 7 },
-        { elementAmount: 8 },
-        { elementAmount: 9 },
-        { elementAmount: 10 },
-        { elementAmount: 11 },
-        { elementAmount: 12 },
-        { elementAmount: 13 },
-        { elementAmount: 14 },
-        { elementAmount: 15 },
-        { elementAmount: 16 },
-        { elementAmount: 17 },
-        { elementAmount: 18 },
-        { elementAmount: 19 },
-        { elementAmount: 20 },
-        { elementAmount: 21 },
+        { colors: 6, slots: 2 },
+        { colors: 8, slots: 2 },
+        { colors: 10, slots: 2 },
+        { colors: 12, slots: 2 }
       ],
-      droppableCharacters: [],
-      draggableCharacters: [],
-      solvedCharacters: 0,
-      isGameOver: false,
-      explanation: "dragdrop_characters",
+      colors: [],
+      dropSlots: [],
+      mixedColor: null,
+      mixedColorResult: null,
+      explanation: "color_blending",
+      // All colors with English and Filipino names
+      allColors: [
+        { id: "red", hex: "#FF0000", name: { en: "Red", fil: "Pula" }, sound: { en: "red", fil: "pula" } },
+        { id: "blue", hex: "#0000FF", name: { en: "Blue", fil: "Asul" }, sound: { en: "blue", fil: "asul" } },
+        { id: "yellow", hex: "#FFFF00", name: { en: "Yellow", fil: "Dilaw" }, sound: { en: "yellow", fil: "dilaw" } },
+        { id: "green", hex: "#00FF00", name: { en: "Green", fil: "Berde" }, sound: { en: "green", fil: "berde" } },
+        { id: "orange", hex: "#FFA500", name: { en: "Orange", fil: "Kahel" }, sound: { en: "orange", fil: "kahel" } },
+        { id: "purple", hex: "#800080", name: { en: "Purple", fil: "Lila" }, sound: { en: "purple", fil: "lila" } },
+        { id: "pink", hex: "#FFC0CB", name: { en: "Pink", fil: "Rosas" }, sound: { en: "pink", fil: "rosas" } },
+        { id: "brown", hex: "#A52A2A", name: { en: "Brown", fil: "Kayumanggi" }, sound: { en: "brown", fil: "kayumanggi" } },
+        { id: "black", hex: "#000000", name: { en: "Black", fil: "Itim" }, sound: { en: "black", fil: "itim" } },
+        { id: "white", hex: "#FFFFFF", name: { en: "White", fil: "Puti" }, sound: { en: "white", fil: "puti" } },
+        { id: "cyan", hex: "#00FFFF", name: { en: "Cyan", fil: "Syan" }, sound: { en: "cyan", fil: "syan" } },
+        { id: "magenta", hex: "#FF00FF", name: { en: "Magenta", fil: "Magenta" }, sound: { en: "magenta", fil: "magenta" } }
+      ],
+      // Color mixing rules
+      colorMixingRules: {
+        "red+blue": { color: "#800080", result: "purple" },
+        "blue+red": { color: "#800080", result: "purple" },
+        "red+yellow": { color: "#FFA500", result: "orange" },
+        "yellow+red": { color: "#FFA500", result: "orange" },
+        "blue+yellow": { color: "#00FF00", result: "green" },
+        "yellow+blue": { color: "#00FF00", result: "green" },
+        "red+green": { color: "#8B4513", result: "brown" },
+        "green+red": { color: "#8B4513", result: "brown" },
+        "blue+orange": { color: "#8B4513", result: "brown" },
+        "orange+blue": { color: "#8B4513", result: "brown" },
+        "yellow+purple": { color: "#8B4513", result: "brown" },
+        "purple+yellow": { color: "#8B4513", result: "brown" },
+        "red+cyan": { color: "#FF69B4", result: "pink" },
+        "cyan+red": { color: "#FF69B4", result: "pink" },
+        "blue+magenta": { color: "#800080", result: "purple" },
+        "magenta+blue": { color: "#800080", result: "purple" }
+      }
     };
   },
-  created: function () {
+  created() {
     SoundUtils.playExplanation(this.explanation);
     this.restart();
   },
-  mounted: function () {
+  mounted() {
     this.$nextTick(() => {
-      this.initDragDrop(true);
+      this.initDragDrop(false);
     });
   },
-  unmounted: function () {
+  unmounted() {
     SoundUtils.stopAll();
   },
-  computed: {
-    gridContainer: function () {
-      let maxElementsInRow = 7;
-      let elementAmount = this.levels[this.selectedLevel].elementAmount;
-      let gridGap = 10;
-      if (elementAmount / maxElementsInRow > 2) {
-        gridGap = 3;
-      } else if (elementAmount / maxElementsInRow > 1) {
-        gridGap = 7;
-      }
-
-      let elementsInRow;
-      if (elementAmount > maxElementsInRow) {
-        elementsInRow = maxElementsInRow;
-      } else {
-        elementsInRow = elementAmount;
-      }
-
-      return {
-        "grid-template-columns":
-          "repeat(" + elementsInRow + ", minmax(20pt, 1fr))",
-        display: "grid",
-        "grid-gap": gridGap + "pt",
-      };
-    },
-  },
   methods: {
-    ondragstart: function (event) {
-      let dragElement = event.target;
-      try {
-        SoundUtils.play(
-          SoundLib[dragElement.getAttribute("data-identifier").toLowerCase()]
-        );
-      } catch (e) {
-        console.error("Error dragging. See event content below ", e);
-        console.error(event);
-      }
-    },
-    ondrop: function (event) {
-      let dropElement = event.currentTarget;
-      let dragElement = event.relatedTarget;
-      let character = dropElement.getAttribute("data-identifier");
-
-      if (character === dragElement.getAttribute("data-identifier")) {
-        this.solvedCharacters++;
-        if (
-          this.solvedCharacters ===
-          this.levels[this.selectedLevel].elementAmount
-        ) {
-          setTimeout(
-            function () {
-              this.emitter.emit("showReward", [this.selectedLevel + 1]);
-              this.isGameOver = true;
-              SoundUtils.playBigSuccess();
-            }.bind(this),
-            800
-          );
-        } else {
-          this.emitter.emit("showRewardPreview");
-        }
-        return true;
-      } else {
-        this.$refs.errorAnimation.showError();
-        return false;
-      }
-    },
-    restart: function () {
-      this.isGameOver = false;
-      this.solvedCharacters = 0;
-      this.droppableCharacters = [];
-      this.draggableCharacters = [];
-      ArrayUtils.shuffleArray(this.characterConfigs);
-      for (let i = 0; i < this.levels[this.selectedLevel].elementAmount; i++) {
-        let config = this.characterConfigs[i];
-        SoundUtils.preload("de/characters/" + config.character.toLowerCase());
-        this.droppableCharacters.push(config);
-        this.draggableCharacters.push(config);
-      }
-      ArrayUtils.shuffleArray(this.droppableCharacters);
+    restart() {
+      const level = this.levels[this.selectedLevel];
+      this.dropSlots = Array(level.slots).fill().map(() => ({ color: null }));
+      this.mixedColor = null;
+      this.mixedColorResult = null;
+      this.colors = this.allColors.slice(0, level.colors);
       this.resetGameComponents();
-      // Reinitialize drag and drop after DOM updates
       this.$nextTick(() => {
-        this.initDragDrop(true);
+        this.initDragDrop(false);
       });
     },
-    resetGameComponents: function () {
+    resetGameComponents() {
       this.resetDragAndDropSuccessions();
     },
-    previousLevel: function () {
-      if (this.selectedLevel > 0) {
-        this.selectedLevel--;
-      }
+    previousLevel() {
+      if (this.selectedLevel > 0) this.selectedLevel--;
       this.restart();
     },
-    nextLevel: function () {
-      if (this.selectedLevel < this.levels.length - 1) {
-        this.selectedLevel++;
-      }
+    nextLevel() {
+      if (this.selectedLevel < this.levels.length - 1) this.selectedLevel++;
       this.restart();
     },
+    ondragstart(event) {
+      const colorId = event.target.getAttribute("data-color-id");
+      this.playColorSound(colorId);
+    },
+    ondrop(event) {
+      const dropElement = event.currentTarget;
+      const dragElement = event.relatedTarget;
+      const slotIndex = parseInt(dropElement.getAttribute("data-slot-index"));
+      const colorId = dragElement.getAttribute("data-color-id");
+      
+      const color = this.allColors.find(c => c.id === colorId);
+      if (!color) return false;
+      
+      // Set color in slot
+      this.dropSlots[slotIndex].color = color;
+      
+      // Check if all slots are filled
+      const allFilled = this.dropSlots.every(slot => slot.color !== null);
+      if (allFilled) {
+        this.mixColors();
+      }
+      
+      return true;
+    },
+    mixColors() {
+      if (this.dropSlots.length < 2) return;
+      
+      const color1 = this.dropSlots[0].color.id;
+      const color2 = this.dropSlots[1].color.id;
+      const mixKey = `${color1}+${color2}`;
+      
+      if (this.colorMixingRules[mixKey]) {
+        const result = this.colorMixingRules[mixKey];
+        this.mixedColor = result.color;
+        this.mixedColorResult = this.allColors.find(c => c.id === result.result);
+        
+        // Play mixed color sound
+        setTimeout(() => {
+          SoundUtils.play(`color/mixed_${color1}_${color2}`);
+        }, 500);
+        
+        // Show success
+        setTimeout(() => {
+          this.emitter.emit("showReward", [this.selectedLevel + 1]);
+          this.isGameOver = true;
+          SoundUtils.playBigSuccess();
+        }, 1500);
+      } else {
+        // No valid mix
+        this.$refs.errorAnimation.showError();
+        SoundUtils.playError();
+      }
+    },
+    playColorSound(colorId) {
+      SoundUtils.play(`color/${colorId}`);
+    }
   },
+  computed: {
+    isGameOver() {
+      return this.mixedColor !== null;
+    }
+  }
 };
 </script>
 
 <style scoped lang="scss">
-.spacer {
-  height: 20%;
-  max-height: 20%;
-}
-
-.drop-section,
-.drag-section {
-  width: 100%;
-  height: 40%;
-  max-height: 40%;
-  justify-items: center;
+.mixing-area {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  position: relative;
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
 }
 
-.draggable-element {
-  touch-action: none;
-  background-color: transparent;
+.drop-slots {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
-.empty-droppable-element {
-  filter: grayscale(85%);
+.drop-slot {
+  width: 100px;
+  height: 100px;
+  border: 3px dashed #ccc;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #666;
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    border-color: #667eea;
+    background-color: rgba(102, 126, 234, 0.1);
+  }
 }
 
-.drop-target-active {
-  background-color: #6060d7;
+.mixed-color-result {
+  margin-top: 20px;
+  text-align: center;
 }
 
-.drop-success {
-  background-color: #24ff02;
+.result-color {
+  width: 120px;
+  height: 120px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border: 3px solid white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.drag-success {
-  visibility: hidden;
+.color-palette {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+}
+
+.color-item {
+  height: 80px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border: 2px solid white;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.filipino-name {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+
+// Mobile optimizations
+@media (max-width: 768px) {
+  .drop-slots {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .color-palette {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .drop-slot {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .result-color {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+// Tablet optimizations
+@media (min-width: 769px) and (max-width: 1024px) {
+  .color-palette {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 </style>
+<!-- Fixed: Color blending game now correctly shows color mixing instead of drag-drop characters -->
