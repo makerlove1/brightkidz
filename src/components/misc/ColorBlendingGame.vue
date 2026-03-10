@@ -203,10 +203,8 @@ export default {
       this.mixedColor = result.color;
       this.mixedColorResult = this.allColors.find(c => c.id === result.result);
       
-      // Play the resulting color sound (e.g., "purple" for blue + red)
-      setTimeout(() => {
-        SoundUtils.play(`color/${result.result}`);
-      }, 500);
+      // Play the resulting color sound immediately when two colors are selected
+      SoundUtils.play(`color/${result.result}`);
       
       // Show success
       setTimeout(() => {
