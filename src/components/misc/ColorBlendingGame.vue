@@ -78,18 +78,30 @@ export default {
       mixedColor: null,
       mixedColorResult: null,
       explanation: "color_blending",
-      // Only 6 basic colors with English and Filipino names
+      // All colors including mixing results
       allColors: [
+        // Basic 6 colors for selection
         { id: "red", hex: "#FF0000", name: { en: "Red", fil: "Pula" }, sound: { en: "red", fil: "pula" } },
         { id: "blue", hex: "#0000FF", name: { en: "Blue", fil: "Asul" }, sound: { en: "blue", fil: "asul" } },
         { id: "yellow", hex: "#FFFF00", name: { en: "Yellow", fil: "Dilaw" }, sound: { en: "yellow", fil: "dilaw" } },
         { id: "green", hex: "#00FF00", name: { en: "Green", fil: "Berde" }, sound: { en: "green", fil: "berde" } },
         { id: "orange", hex: "#FFA500", name: { en: "Orange", fil: "Kahel" }, sound: { en: "orange", fil: "kahel" } },
         { id: "purple", hex: "#800080", name: { en: "Purple", fil: "Lila" }, sound: { en: "purple", fil: "lila" } },
-        { id: "brown", hex: "#8B4513", name: { en: "Brown", fil: "Kayumanggi" }, sound: { en: "brown", fil: "kayumanggi" } }
+        // Additional color results from mixing
+        { id: "brown", hex: "#8B4513", name: { en: "Brown", fil: "Kayumanggi" }, sound: { en: "brown", fil: "kayumanggi" } },
+        { id: "red-orange", hex: "#FF4500", name: { en: "Red Orange", fil: "Pula-Kahel" }, sound: { en: "red-orange", fil: "pula-kahel" } },
+        { id: "teal", hex: "#008080", name: { en: "Teal", fil: "Tiyel" }, sound: { en: "teal", fil: "tiyel" } },
+        { id: "indigo", hex: "#4B0082", name: { en: "Indigo", fil: "Indigo" }, sound: { en: "indigo", fil: "indigo" } },
+        { id: "yellow-green", hex: "#9ACD32", name: { en: "Yellow Green", fil: "Dilaw-Berde" }, sound: { en: "yellow-green", fil: "dilaw-berde" } },
+        { id: "gold", hex: "#FFD700", name: { en: "Gold", fil: "Ginto" }, sound: { en: "gold", fil: "ginto" } },
+        { id: "sea-green", hex: "#2E8B57", name: { en: "Sea Green", fil: "Berde ng Dagat" }, sound: { en: "sea-green", fil: "berde-ng-dagat" } },
+        { id: "dark-red", hex: "#8B0000", name: { en: "Dark Red", fil: "Madilim na Pula" }, sound: { en: "dark-red", fil: "madilim-na-pula" } },
+        { id: "dark-blue", hex: "#00008B", name: { en: "Dark Blue", fil: "Madilim na Asul" }, sound: { en: "dark-blue", fil: "madilim-na-asul" } },
+        { id: "dark-green", hex: "#006400", name: { en: "Dark Green", fil: "Madilim na Berde" }, sound: { en: "dark-green", fil: "madilim-na-berde" } },
+        { id: "dark-orange", hex: "#FF8C00", name: { en: "Dark Orange", fil: "Madilim na Kahel" }, sound: { en: "dark-orange", fil: "madilim-na-kahel" } }
       ],
       // Color mixing rules for 6 basic colors - ALL combinations have results
-      // Results only use colors that have sound files available
+      // Using correct color theory results
       colorMixingRules: {
         // Primary color mixes (creates secondary colors)
         "red+blue": { color: "#800080", result: "purple" },
@@ -102,44 +114,44 @@ export default {
         // Red mixes with other colors
         "red+green": { color: "#8B4513", result: "brown" },
         "green+red": { color: "#8B4513", result: "brown" },
-        "red+orange": { color: "#FF4500", result: "red" },
-        "orange+red": { color: "#FF4500", result: "red" },
+        "red+orange": { color: "#FF4500", result: "red-orange" },
+        "orange+red": { color: "#FF4500", result: "red-orange" },
         "red+purple": { color: "#800080", result: "purple" },
         "purple+red": { color: "#800080", result: "purple" },
         
         // Blue mixes with other colors
-        "blue+green": { color: "#008080", result: "blue" },
-        "green+blue": { color: "#008080", result: "blue" },
+        "blue+green": { color: "#008080", result: "teal" },
+        "green+blue": { color: "#008080", result: "teal" },
         "blue+orange": { color: "#8B4513", result: "brown" },
         "orange+blue": { color: "#8B4513", result: "brown" },
-        "blue+purple": { color: "#4B0082", result: "purple" },
-        "purple+blue": { color: "#4B0082", result: "purple" },
+        "blue+purple": { color: "#4B0082", result: "indigo" },
+        "purple+blue": { color: "#4B0082", result: "indigo" },
         
         // Yellow mixes with other colors
-        "yellow+green": { color: "#9ACD32", result: "green" },
-        "green+yellow": { color: "#9ACD32", result: "green" },
-        "yellow+orange": { color: "#FFD700", result: "yellow" },
-        "orange+yellow": { color: "#FFD700", result: "yellow" },
+        "yellow+green": { color: "#9ACD32", result: "yellow-green" },
+        "green+yellow": { color: "#9ACD32", result: "yellow-green" },
+        "yellow+orange": { color: "#FFD700", result: "gold" },
+        "orange+yellow": { color: "#FFD700", result: "gold" },
         "yellow+purple": { color: "#8B4513", result: "brown" },
         "purple+yellow": { color: "#8B4513", result: "brown" },
         
         // Green mixes with other colors
         "green+orange": { color: "#8B4513", result: "brown" },
         "orange+green": { color: "#8B4513", result: "brown" },
-        "green+purple": { color: "#2E8B57", result: "green" },
-        "purple+green": { color: "#2E8B57", result: "green" },
+        "green+purple": { color: "#2E8B57", result: "sea-green" },
+        "purple+green": { color: "#2E8B57", result: "sea-green" },
         
         // Orange mixes with other colors
         "orange+purple": { color: "#8B4513", result: "brown" },
         "purple+orange": { color: "#8B4513", result: "brown" },
         
-        // Same color mixes (creates same color)
-        "red+red": { color: "#FF0000", result: "red" },
-        "blue+blue": { color: "#0000FF", result: "blue" },
-        "yellow+yellow": { color: "#FFFF00", result: "yellow" },
-        "green+green": { color: "#00FF00", result: "green" },
-        "orange+orange": { color: "#FFA500", result: "orange" },
-        "purple+purple": { color: "#800080", result: "purple" }
+        // Same color mixes (creates darker version)
+        "red+red": { color: "#8B0000", result: "dark-red" },
+        "blue+blue": { color: "#00008B", result: "dark-blue" },
+        "yellow+yellow": { color: "#FFD700", result: "gold" },
+        "green+green": { color: "#006400", result: "dark-green" },
+        "orange+orange": { color: "#FF8C00", result: "dark-orange" },
+        "purple+purple": { color: "#4B0082", result: "indigo" }
       }
     };
   },
