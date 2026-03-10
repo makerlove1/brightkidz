@@ -3,10 +3,7 @@
     :is-highlight-animation-running="isGameOver"
     nav-back-path="/misc"
     :explanation="explanation"
-    @previous="previousLevel"
     @restart="restart"
-    :current-level="selectedLevel"
-    @next="nextLevel"
   >
     <div class="instructions">
       <p>Click two colors to blend them</p>
@@ -74,17 +71,14 @@ export default {
     return {
       selectedLevel: 0,
       levels: [
-        { colors: 6 },
-        { colors: 8 },
-        { colors: 10 },
-        { colors: 12 }
+        { colors: 6 }  // Only one level with all 6 colors
       ],
       colors: [],
       selectedColors: [],
       mixedColor: null,
       mixedColorResult: null,
       explanation: "color_blending",
-      // All colors with English and Filipino names
+      // Only 6 basic colors with English and Filipino names
       allColors: [
         { id: "red", hex: "#FF0000", name: { en: "Red", fil: "Pula" }, sound: { en: "red", fil: "pula" } },
         { id: "blue", hex: "#0000FF", name: { en: "Blue", fil: "Asul" }, sound: { en: "blue", fil: "asul" } },
@@ -92,31 +86,70 @@ export default {
         { id: "green", hex: "#00FF00", name: { en: "Green", fil: "Berde" }, sound: { en: "green", fil: "berde" } },
         { id: "orange", hex: "#FFA500", name: { en: "Orange", fil: "Kahel" }, sound: { en: "orange", fil: "kahel" } },
         { id: "purple", hex: "#800080", name: { en: "Purple", fil: "Lila" }, sound: { en: "purple", fil: "lila" } },
-        { id: "pink", hex: "#FFC0CB", name: { en: "Pink", fil: "Rosas" }, sound: { en: "pink", fil: "rosas" } },
-        { id: "brown", hex: "#A52A2A", name: { en: "Brown", fil: "Kayumanggi" }, sound: { en: "brown", fil: "kayumanggi" } },
-        { id: "black", hex: "#000000", name: { en: "Black", fil: "Itim" }, sound: { en: "black", fil: "itim" } },
-        { id: "white", hex: "#FFFFFF", name: { en: "White", fil: "Puti" }, sound: { en: "white", fil: "puti" } },
-        { id: "cyan", hex: "#00FFFF", name: { en: "Cyan", fil: "Syan" }, sound: { en: "cyan", fil: "syan" } },
-        { id: "magenta", hex: "#FF00FF", name: { en: "Magenta", fil: "Magenta" }, sound: { en: "magenta", fil: "magenta" } }
+        // Additional color results from mixing (for sound playback)
+        { id: "red-orange", hex: "#FF4500", name: { en: "Red Orange", fil: "Pula-Kahel" }, sound: { en: "red-orange", fil: "pula-kahel" } },
+        { id: "dark-red", hex: "#8B0000", name: { en: "Dark Red", fil: "Madilim na Pula" }, sound: { en: "dark-red", fil: "madilim-na-pula" } },
+        { id: "teal", hex: "#008080", name: { en: "Teal", fil: "Tiyel" }, sound: { en: "teal", fil: "tiyel" } },
+        { id: "indigo", hex: "#4B0082", name: { en: "Indigo", fil: "Indigo" }, sound: { en: "indigo", fil: "indigo" } },
+        { id: "yellow-green", hex: "#9ACD32", name: { en: "Yellow Green", fil: "Dilaw-Berde" }, sound: { en: "yellow-green", fil: "dilaw-berde" } },
+        { id: "gold", hex: "#FFD700", name: { en: "Gold", fil: "Ginto" }, sound: { en: "gold", fil: "ginto" } },
+        { id: "sea-green", hex: "#2E8B57", name: { en: "Sea Green", fil: "Berde ng Dagat" }, sound: { en: "sea-green", fil: "berde-ng-dagat" } },
+        { id: "dark-blue", hex: "#00008B", name: { en: "Dark Blue", fil: "Madilim na Asul" }, sound: { en: "dark-blue", fil: "madilim-na-asul" } },
+        { id: "dark-green", hex: "#006400", name: { en: "Dark Green", fil: "Madilim na Berde" }, sound: { en: "dark-green", fil: "madilim-na-berde" } },
+        { id: "dark-orange", hex: "#FF8C00", name: { en: "Dark Orange", fil: "Madilim na Kahel" }, sound: { en: "dark-orange", fil: "madilim-na-kahel" } },
+        { id: "brown", hex: "#8B4513", name: { en: "Brown", fil: "Kayumanggi" }, sound: { en: "brown", fil: "kayumanggi" } }
       ],
-      // Color mixing rules
+      // Color mixing rules for 6 basic colors - ALL combinations have results
       colorMixingRules: {
+        // Primary color mixes (creates secondary colors)
         "red+blue": { color: "#800080", result: "purple" },
         "blue+red": { color: "#800080", result: "purple" },
         "red+yellow": { color: "#FFA500", result: "orange" },
         "yellow+red": { color: "#FFA500", result: "orange" },
         "blue+yellow": { color: "#00FF00", result: "green" },
         "yellow+blue": { color: "#00FF00", result: "green" },
+        
+        // Red mixes with other colors
         "red+green": { color: "#8B4513", result: "brown" },
         "green+red": { color: "#8B4513", result: "brown" },
+        "red+orange": { color: "#FF4500", result: "red-orange" },
+        "orange+red": { color: "#FF4500", result: "red-orange" },
+        "red+purple": { color: "#800080", result: "purple" },
+        "purple+red": { color: "#800080", result: "purple" },
+        
+        // Blue mixes with other colors
+        "blue+green": { color: "#008080", result: "teal" },
+        "green+blue": { color: "#008080", result: "teal" },
         "blue+orange": { color: "#8B4513", result: "brown" },
         "orange+blue": { color: "#8B4513", result: "brown" },
+        "blue+purple": { color: "#4B0082", result: "indigo" },
+        "purple+blue": { color: "#4B0082", result: "indigo" },
+        
+        // Yellow mixes with other colors
+        "yellow+green": { color: "#9ACD32", result: "yellow-green" },
+        "green+yellow": { color: "#9ACD32", result: "yellow-green" },
+        "yellow+orange": { color: "#FFD700", result: "gold" },
+        "orange+yellow": { color: "#FFD700", result: "gold" },
         "yellow+purple": { color: "#8B4513", result: "brown" },
         "purple+yellow": { color: "#8B4513", result: "brown" },
-        "red+cyan": { color: "#FF69B4", result: "pink" },
-        "cyan+red": { color: "#FF69B4", result: "pink" },
-        "blue+magenta": { color: "#800080", result: "purple" },
-        "magenta+blue": { color: "#800080", result: "purple" }
+        
+        // Green mixes with other colors
+        "green+orange": { color: "#8B4513", result: "brown" },
+        "orange+green": { color: "#8B4513", result: "brown" },
+        "green+purple": { color: "#2E8B57", result: "sea-green" },
+        "purple+green": { color: "#2E8B57", result: "sea-green" },
+        
+        // Orange mixes with other colors
+        "orange+purple": { color: "#8B4513", result: "brown" },
+        "purple+orange": { color: "#8B4513", result: "brown" },
+        
+        // Same color mixes (creates darker version)
+        "red+red": { color: "#8B0000", result: "dark-red" },
+        "blue+blue": { color: "#00008B", result: "dark-blue" },
+        "yellow+yellow": { color: "#FFD700", result: "gold" },
+        "green+green": { color: "#006400", result: "dark-green" },
+        "orange+orange": { color: "#FF8C00", result: "dark-orange" },
+        "purple+purple": { color: "#4B0082", result: "indigo" }
       }
     };
   },
@@ -129,19 +162,10 @@ export default {
   },
   methods: {
     restart() {
-      const level = this.levels[this.selectedLevel];
       this.selectedColors = [];
       this.mixedColor = null;
       this.mixedColorResult = null;
-      this.colors = this.allColors.slice(0, level.colors);
-    },
-    previousLevel() {
-      if (this.selectedLevel > 0) this.selectedLevel--;
-      this.restart();
-    },
-    nextLevel() {
-      if (this.selectedLevel < this.levels.length - 1) this.selectedLevel++;
-      this.restart();
+      this.colors = this.allColors.slice(0, 6); // Always show all 6 colors
     },
     selectColor(color) {
       // If we already have a result, don't allow more selections
@@ -174,32 +198,22 @@ export default {
       const color2 = this.selectedColors[1].id;
       const mixKey = `${color1}+${color2}`;
       
-      if (this.colorMixingRules[mixKey]) {
-        const result = this.colorMixingRules[mixKey];
-        this.mixedColor = result.color;
-        this.mixedColorResult = this.allColors.find(c => c.id === result.result);
-        
-        // Play the resulting color sound (e.g., "purple" for blue + red)
-        setTimeout(() => {
-          SoundUtils.play(`color/${result.result}`);
-        }, 500);
-        
-        // Show success
-        setTimeout(() => {
-          this.emitter.emit("showReward", [this.selectedLevel + 1]);
-          this.isGameOver = true;
-          SoundUtils.playBigSuccess();
-        }, 1500);
-      } else {
-        // No valid mix
-        this.$refs.errorAnimation.showError();
-        SoundUtils.playError();
-        
-        // Clear selection after error
-        setTimeout(() => {
-          this.selectedColors = [];
-        }, 1000);
-      }
+      // ALL combinations should have results now
+      const result = this.colorMixingRules[mixKey];
+      this.mixedColor = result.color;
+      this.mixedColorResult = this.allColors.find(c => c.id === result.result);
+      
+      // Play the resulting color sound (e.g., "purple" for blue + red)
+      setTimeout(() => {
+        SoundUtils.play(`color/${result.result}`);
+      }, 500);
+      
+      // Show success
+      setTimeout(() => {
+        this.emitter.emit("showReward", [this.selectedLevel + 1]);
+        this.isGameOver = true;
+        SoundUtils.playBigSuccess();
+      }, 1500);
     },
     isColorSelected(colorId) {
       return this.selectedColors.some(c => c.id === colorId);
