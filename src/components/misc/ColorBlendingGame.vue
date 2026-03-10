@@ -8,26 +8,34 @@
     :current-level="selectedLevel"
     @next="nextLevel"
   >
-    <div class="mixing-area">
-      <div class="drop-slots">
+    <div class="instructions">
+      <p>Click two colors to blend them</p>
+    </div>
+    
+    <div class="selected-colors">
+      <div class="selected-color-container">
         <div 
-          v-for="(slot, index) in dropSlots" 
-          :key="index"
-          class="drop-slot"
-          :data-slot-index="index"
-          :style="{ backgroundColor: slot.color ? slot.color.hex : '#f0f0f0' }"
+          class="selected-color"
+          :style="{ backgroundColor: selectedColors[0] ? selectedColors[0].hex : '#f0f0f0' }"
         >
-          <span v-if="!slot.color">Drop color here</span>
-          <span v-else>{{ slot.color.name.en }}</span>
+          <span v-if="!selectedColors[0]">First color</span>
+          <span v-else>{{ selectedColors[0].name.en }}</span>
         </div>
-      </div>
-      
-      <div class="mixed-color-result" v-if="mixedColor">
+        <div class="plus-sign" v-if="selectedColors[0]">+</div>
+        <div 
+          class="selected-color"
+          :style="{ backgroundColor: selectedColors[1] ? selectedColors[1].hex : '#f0f0f0' }"
+        >
+          <span v-if="!selectedColors[1]">Second color</span>
+          <span v-else>{{ selectedColors[1].name.en }}</span>
+        </div>
+        <div class="equals-sign" v-if="mixedColorResult">=</div>
         <div 
           class="result-color"
+          v-if="mixedColorResult"
           :style="{ backgroundColor: mixedColor }"
         >
-          {{ mixedColorResult ? mixedColorResult.name.en : 'Mixed Color' }}
+          {{ mixedColorResult.name.en }}
         </div>
       </div>
     </div>
@@ -37,13 +45,17 @@
         v-for="color in colors" 
         :key="color.id"
         class="color-item"
-        :data-color-id="color.id"
+        :class="{ 'selected': isColorSelected(color.id), 'disabled': mixedColorResult }"
         :style="{ backgroundColor: color.hex }"
-        @click="playColorSound(color.id)"
+        @click="selectColor(color)"
       >
         <span>{{ color.name.en }}</span>
         <span class="filipino-name">{{ color.name.fil }}</span>
       </div>
+    </div>
+    
+    <div class="reset-button-container" v-if="mixedColorResult">
+      <button class="reset-button" @click="restart">Try Again</button>
     </div>
     
     <ErrorAnimation ref="errorAnimation"></ErrorAnimation>
@@ -52,25 +64,23 @@
 
 <script>
 import Game from "../Game.vue";
-import { dragDrop } from "../mixins/dragDrop";
 import { SoundUtils } from "../utils/SoundUtils";
 import ErrorAnimation from "../ErrorAnimation.vue";
 
 export default {
   name: "ColorBlendingGame",
   components: { Game, ErrorAnimation },
-  mixins: [dragDrop],
   data() {
     return {
       selectedLevel: 0,
       levels: [
-        { colors: 6, slots: 2 },
-        { colors: 8, slots: 2 },
-        { colors: 10, slots: 2 },
-        { colors: 12, slots: 2 }
+        { colors: 6 },
+        { colors: 8 },
+        { colors: 10 },
+        { colors: 12 }
       ],
       colors: [],
-      dropSlots: [],
+      selectedColors: [],
       mixedColor: null,
       mixedColorResult: null,
       explanation: "color_blending",
@@ -114,28 +124,16 @@ export default {
     SoundUtils.playExplanation(this.explanation);
     this.restart();
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.initDragDrop(false);
-    });
-  },
   unmounted() {
     SoundUtils.stopAll();
   },
   methods: {
     restart() {
       const level = this.levels[this.selectedLevel];
-      this.dropSlots = Array(level.slots).fill().map(() => ({ color: null }));
+      this.selectedColors = [];
       this.mixedColor = null;
       this.mixedColorResult = null;
       this.colors = this.allColors.slice(0, level.colors);
-      this.resetGameComponents();
-      this.$nextTick(() => {
-        this.initDragDrop(false);
-      });
-    },
-    resetGameComponents() {
-      this.resetDragAndDropSuccessions();
     },
     previousLevel() {
       if (this.selectedLevel > 0) this.selectedLevel--;
@@ -145,35 +143,35 @@ export default {
       if (this.selectedLevel < this.levels.length - 1) this.selectedLevel++;
       this.restart();
     },
-    ondragstart(event) {
-      const colorId = event.target.getAttribute("data-color-id");
-      this.playColorSound(colorId);
-    },
-    ondrop(event) {
-      const dropElement = event.currentTarget;
-      const dragElement = event.relatedTarget;
-      const slotIndex = parseInt(dropElement.getAttribute("data-slot-index"));
-      const colorId = dragElement.getAttribute("data-color-id");
+    selectColor(color) {
+      // If we already have a result, don't allow more selections
+      if (this.mixedColorResult) return;
       
-      const color = this.allColors.find(c => c.id === colorId);
-      if (!color) return false;
-      
-      // Set color in slot
-      this.dropSlots[slotIndex].color = color;
-      
-      // Check if all slots are filled
-      const allFilled = this.dropSlots.every(slot => slot.color !== null);
-      if (allFilled) {
-        this.mixColors();
+      // If color is already selected, deselect it
+      const index = this.selectedColors.findIndex(c => c.id === color.id);
+      if (index !== -1) {
+        this.selectedColors.splice(index, 1);
+        return;
       }
       
-      return true;
-    },
-    mixColors() {
-      if (this.dropSlots.length < 2) return;
+      // Play the color sound when clicked
+      SoundUtils.play(`color/${color.id}`);
       
-      const color1 = this.dropSlots[0].color.id;
-      const color2 = this.dropSlots[1].color.id;
+      // Add color to selection (max 2 colors)
+      if (this.selectedColors.length < 2) {
+        this.selectedColors.push(color);
+        
+        // If we now have 2 colors, blend them
+        if (this.selectedColors.length === 2) {
+          this.blendColors();
+        }
+      }
+    },
+    blendColors() {
+      if (this.selectedColors.length < 2) return;
+      
+      const color1 = this.selectedColors[0].id;
+      const color2 = this.selectedColors[1].id;
       const mixKey = `${color1}+${color2}`;
       
       if (this.colorMixingRules[mixKey]) {
@@ -181,9 +179,9 @@ export default {
         this.mixedColor = result.color;
         this.mixedColorResult = this.allColors.find(c => c.id === result.result);
         
-        // Play mixed color sound
+        // Play the resulting color sound (e.g., "purple" for blue + red)
         setTimeout(() => {
-          SoundUtils.play(`color/mixed_${color1}_${color2}`);
+          SoundUtils.play(`color/${result.result}`);
         }, 500);
         
         // Show success
@@ -196,59 +194,73 @@ export default {
         // No valid mix
         this.$refs.errorAnimation.showError();
         SoundUtils.playError();
+        
+        // Clear selection after error
+        setTimeout(() => {
+          this.selectedColors = [];
+        }, 1000);
       }
     },
-    playColorSound(colorId) {
-      SoundUtils.play(`color/${colorId}`);
+    isColorSelected(colorId) {
+      return this.selectedColors.some(c => c.id === colorId);
     }
   },
   computed: {
     isGameOver() {
-      return this.mixedColor !== null;
+      return this.mixedColorResult !== null;
     }
   }
 };
 </script>
 
 <style scoped lang="scss">
-.mixing-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.instructions {
+  text-align: center;
   margin: 20px 0;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
+  font-size: 1.2rem;
+  color: white;
+  font-weight: bold;
 }
 
-.drop-slots {
+.selected-colors {
   display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
+  justify-content: center;
+  margin: 30px 0;
 }
 
-.drop-slot {
+.selected-color-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.selected-color {
   width: 100px;
   height: 100px;
-  border: 3px dashed #ccc;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 0.9rem;
-  color: #666;
+  color: white;
   text-align: center;
-  transition: all 0.3s ease;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border: 3px solid white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   
-  &:hover {
-    border-color: #667eea;
-    background-color: rgba(102, 126, 234, 0.1);
+  &:first-child {
+    background-color: #f0f0f0;
+    color: #666;
   }
 }
 
-.mixed-color-result {
-  margin-top: 20px;
-  text-align: center;
+.plus-sign, .equals-sign {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
 }
 
 .result-color {
@@ -263,6 +275,13 @@ export default {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   border: 3px solid white;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 .color-palette {
@@ -287,15 +306,25 @@ export default {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   border: 2px solid white;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
   
-  &:hover {
+  &:hover:not(.disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
   
-  &:active {
+  &:active:not(.disabled) {
     transform: scale(0.95);
+  }
+  
+  &.selected {
+    border: 4px solid #ffd700;
+    box-shadow: 0 0 15px #ffd700;
+  }
+  
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
 
@@ -305,18 +334,49 @@ export default {
   margin-top: 4px;
 }
 
+.reset-button-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.reset-button {
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 // Mobile optimizations
 @media (max-width: 768px) {
-  .drop-slots {
+  .selected-color-container {
     flex-direction: column;
     align-items: center;
+    gap: 10px;
+  }
+  
+  .plus-sign, .equals-sign {
+    font-size: 1.5rem;
   }
   
   .color-palette {
     grid-template-columns: repeat(3, 1fr);
   }
   
-  .drop-slot {
+  .selected-color {
     width: 80px;
     height: 80px;
   }
@@ -334,4 +394,3 @@ export default {
   }
 }
 </style>
-<!-- Fixed: Color blending game now correctly shows color mixing instead of drag-drop characters -->
