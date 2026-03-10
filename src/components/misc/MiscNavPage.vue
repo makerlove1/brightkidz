@@ -24,12 +24,6 @@
       src="/img/games/ColorIdentification.svg"
       :alt="t('colorIdentificationAlt')"
     />
-    <link-tile
-      title="Matching Game"
-      nav-path="/misc/matching"
-      src="/img/games/Matching.svg"
-      alt="matching pairs game"
-    />
   </NavPage>
 </template>
 

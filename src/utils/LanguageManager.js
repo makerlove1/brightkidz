@@ -135,17 +135,6 @@ class LanguageManager {
           color_identification: {
             what_color_is_this: "What color is this?",
             score: "Score"
-          },
-          matching: {
-            find_pairs: "Find the Matching Pairs",
-            click_two_cards: "Click two cards to find matching pairs",
-            pairs: "Pairs",
-            moves: "Moves",
-            level: "Level",
-            pairs_to_find: "pairs to find",
-            completed: "Game Completed",
-            time: "Time",
-            moves: "Moves"
           }
         }
       },
@@ -269,17 +258,6 @@ class LanguageManager {
           color_identification: {
             what_color_is_this: "Anong kulay ito?",
             score: "Puntos"
-          },
-          matching: {
-            find_pairs: "Hanapin ang Mga Kapares",
-            click_two_cards: "I-click ang dalawang kard para hanapin ang mga kapares",
-            pairs: "Mga Pares",
-            moves: "Mga Galaw",
-            level: "Antas",
-            pairs_to_find: "pares na hahanapin",
-            completed: "Tapos na ang Laro",
-            time: "Oras",
-            moves: "Mga Galaw"
           }
         }
       },
@@ -403,17 +381,6 @@ class LanguageManager {
           color_identification: {
             what_color_is_this: "Welche Farbe ist das?",
             score: "Punkte"
-          },
-          matching: {
-            find_pairs: "Finde die Passenden Paare",
-            click_two_cards: "Klicke zwei Karten an, um passende Paare zu finden",
-            pairs: "Paare",
-            moves: "Züge",
-            level: "Level",
-            pairs_to_find: "Paare zu finden",
-            completed: "Spiel Abgeschlossen",
-            time: "Zeit",
-            moves: "Züge"
           }
         }
       }

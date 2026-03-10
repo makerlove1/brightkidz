@@ -17,7 +17,6 @@ import CalculateNumbers0To18 from "./components/misc/CalculateNumbers0To18.vue";
 import QuizGame from "./components/misc/QuizGame.vue";
 import ColorBlendingGame from "./components/misc/ColorBlendingGame.vue";
 import ColorIdentificationGame from "./components/misc/ColorIdentificationGame.vue";
-import MatchingGame from "./components/misc/MatchingGame.vue";
 import Login from "./components/Login.vue";
 import AdminDashboard from "./components/AdminDashboard.vue";
 import UserProfile from "./components/UserProfile.vue";
@@ -102,11 +101,6 @@ const router = createRouter({
       path: "/misc/color-identification",
       name: "ColorIdentificationGame",
       component: ColorIdentificationGame,
-    },
-    {
-      path: "/misc/matching",
-      name: "MatchingGame",
-      component: MatchingGame,
     },
   ],
 });
