@@ -1,68 +1,148 @@
+#!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const gtts = require('gtts');
 
-// Create directories if they don't exist
-const englishDir = path.join(__dirname, '../public/sounds/english/explanation');
-const filipinoDir = path.join(__dirname, '../public/sounds/filipino/explanation');
+// 12 colors from the color wheel with English and Filipino names
+const COLORS = {
+  red: { en: 'red', tl: 'pula' },
+  'red-orange': { en: 'red orange', tl: 'pula kahel' },
+  orange: { en: 'orange', tl: 'kahel' },
+  'yellow-orange': { en: 'yellow orange', tl: 'dilaw kahel' },
+  yellow: { en: 'yellow', tl: 'dilaw' },
+  'yellow-green': { en: 'yellow green', tl: 'dilaw berde' },
+  green: { en: 'green', tl: 'berde' },
+  'blue-green': { en: 'blue green', tl: 'asul berde' },
+  blue: { en: 'blue', tl: 'asul' },
+  'blue-violet': { en: 'blue violet', tl: 'asul lila' },
+  violet: { en: 'violet', tl: 'lila' },
+  'red-violet': { en: 'red violet', tl: 'pula lila' }
+};
 
-if (!fs.existsSync(englishDir)) {
-  fs.mkdirSync(englishDir, { recursive: true });
-}
-if (!fs.existsSync(filipinoDir)) {
-  fs.mkdirSync(filipinoDir, { recursive: true });
-}
+// Explanation text for color identification game
+const EXPLANATIONS = {
+  color_identification: { 
+    en: 'Color identification game. Identify the colors you see.', 
+    tl: 'Laro ng pagkilala sa kulay. Kilalanin ang mga kulay na nakikita mo.' 
+  }
+};
 
-// Function to generate TTS file
-function generateTTS(text, filename, language = 'en') {
+function generateAudio(text, lang, outputPath) {
   return new Promise((resolve, reject) => {
-    const tts = new gtts(text, language);
-    const filePath = language === 'en' ? 
-      path.join(englishDir, `${filename}.mp3`) : 
-      path.join(filipinoDir, `${filename}.mp3`);
-    
-    // Check if file already exists
-    if (fs.existsSync(filePath)) {
-      console.log(`✓ File already exists: ${filename}.mp3`);
-      resolve();
-      return;
+    const dir = path.dirname(outputPath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
     }
-    
-    tts.save(filePath, (err) => {
-      if (err) {
-        console.error(`✗ Error generating ${filename}.mp3:`, err);
-        reject(err);
-      } else {
-        console.log(`✓ Generated: ${filename}.mp3`);
-        resolve();
-      }
-    });
+
+    try {
+      const tts = require('node-gtts')(lang);
+      tts.save(outputPath, text, (err) => {
+        if (err) {
+          console.log(`✗ ${path.basename(outputPath)} - ${err.message}`);
+          reject(err);
+        } else {
+          console.log(`✓ ${path.basename(outputPath)}`);
+          resolve();
+        }
+      });
+    } catch (error) {
+      console.log(`✗ ${path.basename(outputPath)} - ${error.message}`);
+      reject(error);
+    }
   });
 }
 
-// Generate explanation files
-async function generateExplanations() {
-  console.log('Generating color identification explanation sounds...\n');
-  
+async function main() {
+  const basePath = path.join(__dirname, '..', 'public', 'sounds');
+  let success = 0;
+  let errors = 0;
+
+  console.log('🎨 Color Identification Sound Generator');
+  console.log('='.repeat(60));
+
   try {
-    // English explanation
-    await generateTTS(
-      "Welcome to Color Identification! Look at the color and choose the correct name from the options below. Click on a color to hear its name.",
-      "color_identification",
-      "en"
-    );
+    // 1. Generate color identification explanation sound
+    console.log('\n📚 Generating Color Identification Explanation...');
     
-    // Filipino explanation (using English TTS for better pronunciation)
-    await generateTTS(
-      "Maligayang pagdating sa Pagkilala sa Kulay! Tingnan ang kulay at piliin ang tamang pangalan mula sa mga pagpipilian sa ibaba. I-click ang kulay para marinig ang pangalan nito.",
-      "color_identification",
-      "en"
-    );
+    for (const [filename, trans] of Object.entries(EXPLANATIONS)) {
+      // English
+      try {
+        await generateAudio(
+          trans.en,
+          'en',
+          path.join(basePath, 'english', 'explanation', `${filename}.mp3`)
+        );
+        success++;
+      } catch (e) { 
+        errors++; 
+      }
+      
+      // Filipino
+      try {
+        await generateAudio(
+          trans.tl,
+          'tl',
+          path.join(basePath, 'filipino', 'explanation', `${filename}.mp3`)
+        );
+        success++;
+      } catch (e) { 
+        errors++; 
+      }
+    }
+
+    // 2. Generate individual color sounds for 12 color wheel colors
+    console.log('\n🎨 Generating 12 Color Wheel Sounds...');
     
-    console.log('\n✅ Color identification explanation sounds generated!');
+    for (const [colorId, trans] of Object.entries(COLORS)) {
+      // English
+      try {
+        await generateAudio(
+          trans.en, 
+          'en', 
+          path.join(basePath, 'english', 'color', `${colorId}.mp3`)
+        );
+        success++;
+      } catch (e) { 
+        errors++; 
+      }
+      
+      // Filipino
+      try {
+        await generateAudio(
+          trans.tl, 
+          'tl', 
+          path.join(basePath, 'filipino', 'color', `${colorId}.mp3`)
+        );
+        success++;
+      } catch (e) { 
+        errors++; 
+      }
+    }
+
+    console.log('\n' + '='.repeat(60));
+    console.log(`✅ Success: ${success} files generated`);
+    if (errors > 0) {
+      console.log(`❌ Errors: ${errors} files failed`);
+    }
+    console.log('\n📊 Summary:');
+    console.log(`   - Explanation: ${Object.keys(EXPLANATIONS).length * 2} files (${Object.keys(EXPLANATIONS).length} EN + ${Object.keys(EXPLANATIONS).length} TL)`);
+    console.log(`   - Color wheel colors: ${Object.keys(COLORS).length * 2} files (${Object.keys(COLORS).length} EN + ${Object.keys(COLORS).length} TL)`);
+    console.log(`   - Total: ${(Object.keys(EXPLANATIONS).length * 2) + (Object.keys(COLORS).length * 2)} files`);
+    console.log('\n✨ Done!');
   } catch (error) {
-    console.error('Failed to generate explanation sounds:', error);
+    console.error('❌ Fatal Error:', error);
+    process.exit(1);
   }
 }
 
-generateExplanations();
+// Check if node-gtts is installed
+try {
+  require('node-gtts');
+  main();
+} catch (error) {
+  console.error('❌ Error: node-gtts is not installed!');
+  console.error('Please install it by running:');
+  console.error('  npm install node-gtts');
+  console.error('\nOr install all dependencies:');
+  console.error('  npm install');
+  process.exit(1);
+}

@@ -18,7 +18,7 @@
           />
         </div>
         <div class="question-text">
-          {{ $t('games.color_identification.what_color_is_this') }}
+          {{ t('games.color_identification.what_color_is_this') }}
         </div>
       </div>
       
@@ -43,7 +43,7 @@
       </div>
       
       <div class="progress-area">
-        <div class="score">{{ $t('games.color_identification.score') }}: {{ score }}/{{ totalQuestions }}</div>
+        <div class="score">{{ t('games.color_identification.score') }}: {{ score }}/{{ totalQuestions }}</div>
         <div class="progress-bar">
           <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
         </div>
@@ -58,10 +58,12 @@
 import Game from "../Game.vue";
 import { SoundUtils } from "../utils/SoundUtils";
 import ErrorAnimation from "../ErrorAnimation.vue";
+import translationMixin from "@/mixins/translationMixin";
 
 export default {
   name: "ColorIdentificationGame",
   components: { Game, ErrorAnimation },
+  mixins: [translationMixin],
   data() {
     return {
       selectedLevel: 0,
@@ -79,18 +81,19 @@ export default {
       currentQuestion: 0,
       totalQuestions: 10,
       allColors: [
+        // 12 colors from the color wheel
         { id: "red", hex: "#FF0000", name: { en: "Red", fil: "Pula" }, sound: { en: "red", fil: "pula" }, image: "/img/colors/red.svg" },
-        { id: "blue", hex: "#0000FF", name: { en: "Blue", fil: "Asul" }, sound: { en: "blue", fil: "asul" }, image: "/img/colors/blue.svg" },
-        { id: "yellow", hex: "#FFFF00", name: { en: "Yellow", fil: "Dilaw" }, sound: { en: "yellow", fil: "dilaw" }, image: "/img/colors/yellow.svg" },
-        { id: "green", hex: "#00FF00", name: { en: "Green", fil: "Berde" }, sound: { en: "green", fil: "berde" }, image: "/img/colors/green.svg" },
+        { id: "red-orange", hex: "#FF4500", name: { en: "Red Orange", fil: "Pula-Kahel" }, sound: { en: "red-orange", fil: "pula-kahel" }, image: "/img/colors/red-orange.svg" },
         { id: "orange", hex: "#FFA500", name: { en: "Orange", fil: "Kahel" }, sound: { en: "orange", fil: "kahel" }, image: "/img/colors/orange.svg" },
-        { id: "purple", hex: "#800080", name: { en: "Purple", fil: "Lila" }, sound: { en: "purple", fil: "lila" }, image: "/img/colors/purple.svg" },
-        { id: "pink", hex: "#FFC0CB", name: { en: "Pink", fil: "Rosas" }, sound: { en: "pink", fil: "rosas" }, image: "/img/colors/pink.svg" },
-        { id: "brown", hex: "#A52A2A", name: { en: "Brown", fil: "Kayumanggi" }, sound: { en: "brown", fil: "kayumanggi" }, image: "/img/colors/brown.svg" },
-        { id: "black", hex: "#000000", name: { en: "Black", fil: "Itim" }, sound: { en: "black", fil: "itim" }, image: "/img/colors/black.svg" },
-        { id: "white", hex: "#FFFFFF", name: { en: "White", fil: "Puti" }, sound: { en: "white", fil: "puti" }, image: "/img/colors/white.svg" },
-        { id: "cyan", hex: "#00FFFF", name: { en: "Cyan", fil: "Syan" }, sound: { en: "cyan", fil: "syan" }, image: "/img/colors/cyan.svg" },
-        { id: "magenta", hex: "#FF00FF", name: { en: "Magenta", fil: "Magenta" }, sound: { en: "magenta", fil: "magenta" }, image: "/img/colors/magenta.svg" }
+        { id: "yellow-orange", hex: "#FFD700", name: { en: "Yellow Orange", fil: "Dilaw-Kahel" }, sound: { en: "yellow-orange", fil: "dilaw-kahel" }, image: "/img/colors/yellow-orange.svg" },
+        { id: "yellow", hex: "#FFFF00", name: { en: "Yellow", fil: "Dilaw" }, sound: { en: "yellow", fil: "dilaw" }, image: "/img/colors/yellow.svg" },
+        { id: "yellow-green", hex: "#9ACD32", name: { en: "Yellow Green", fil: "Dilaw-Berde" }, sound: { en: "yellow-green", fil: "dilaw-berde" }, image: "/img/colors/yellow-green.svg" },
+        { id: "green", hex: "#00FF00", name: { en: "Green", fil: "Berde" }, sound: { en: "green", fil: "berde" }, image: "/img/colors/green.svg" },
+        { id: "blue-green", hex: "#008080", name: { en: "Blue Green", fil: "Asul-Berde" }, sound: { en: "blue-green", fil: "asul-berde" }, image: "/img/colors/blue-green.svg" },
+        { id: "blue", hex: "#0000FF", name: { en: "Blue", fil: "Asul" }, sound: { en: "blue", fil: "asul" }, image: "/img/colors/blue.svg" },
+        { id: "blue-violet", hex: "#4B0082", name: { en: "Blue Violet", fil: "Asul-Lila" }, sound: { en: "blue-violet", fil: "asul-lila" }, image: "/img/colors/blue-violet.svg" },
+        { id: "violet", hex: "#800080", name: { en: "Violet", fil: "Lila" }, sound: { en: "violet", fil: "lila" }, image: "/img/colors/violet.svg" },
+        { id: "red-violet", hex: "#C71585", name: { en: "Red Violet", fil: "Pula-Lila" }, sound: { en: "red-violet", fil: "pula-lila" }, image: "/img/colors/red-violet.svg" }
       ]
     };
   },
@@ -196,8 +199,8 @@ export default {
       const color = this.allColors.find(c => c.id === colorId);
       if (color) {
         const lang = SoundUtils.getLanguagePath();
-        const soundPath = `${lang}/color/${color.sound[lang === 'filipino' ? 'fil' : 'en']}`;
-        SoundUtils.playSound(soundPath);
+        const soundPath = `${lang}/color/${color.id}`;
+        SoundUtils.play(soundPath);
       }
     },
     shuffleArray(array) {
