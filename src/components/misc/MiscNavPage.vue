@@ -24,6 +24,12 @@
       src="/img/games/ColorBlending.svg"
       :alt="t('colorBlendingAlt')"
     />
+    <link-tile
+      :title="t('colorIdentification')"
+      nav-path="/misc/color-identification"
+      src="/img/games/ColorIdentification.svg"
+      :alt="t('colorIdentificationAlt')"
+    />
   </NavPage>
 </template>
 

@@ -32,6 +32,10 @@ class LanguageManager {
         colorBlending: "Color Blending",
         colorBlendingAlt: "mix colors and learn color names",
         
+        // Color identification game
+        colorIdentification: "Color Identification",
+        colorIdentificationAlt: "identify and learn color names",
+        
         // Common
         back: "Back",
         help: "Help",
@@ -124,7 +128,15 @@ class LanguageManager {
         totalStars: "Total Stars",
         starsToNext: "Stars to Next Level",
         levelHistory: "Level History",
-        topLevels: "Top Levels"
+        topLevels: "Top Levels",
+        
+        // Games
+        games: {
+          color_identification: {
+            what_color_is_this: "What color is this?",
+            score: "Score"
+          }
+        }
       },
       tl: {
         // Home page (Filipino/Tagalog)
@@ -142,6 +154,10 @@ class LanguageManager {
         // Color blending game
         colorBlending: "Paghahalo ng Kulay",
         colorBlendingAlt: "maghalo ng mga kulay at matuto ng mga pangalan ng kulay",
+        
+        // Color identification game
+        colorIdentification: "Pagkilala sa Kulay",
+        colorIdentificationAlt: "kilalanin at matuto ng mga pangalan ng kulay",
         
         // Common
         back: "Bumalik",
@@ -235,7 +251,15 @@ class LanguageManager {
         totalStars: "Kabuuang Bituin",
         starsToNext: "Bituin sa Susunod na Antas",
         levelHistory: "Kasaysayan ng Antas",
-        topLevels: "Nangungunang Antas"
+        topLevels: "Nangungunang Antas",
+        
+        // Games
+        games: {
+          color_identification: {
+            what_color_is_this: "Anong kulay ito?",
+            score: "Puntos"
+          }
+        }
       },
       de: {
         // Home page (German)
@@ -253,6 +277,10 @@ class LanguageManager {
         // Color blending game
         colorBlending: "Farbmischen",
         colorBlendingAlt: "Farben mischen und Farbnamen lernen",
+        
+        // Color identification game
+        colorIdentification: "Farberkennung",
+        colorIdentificationAlt: "Farben erkennen und Farbnamen lernen",
         
         // Common
         back: "Zurück",
@@ -346,7 +374,15 @@ class LanguageManager {
         totalStars: "Gesamtsterne",
         starsToNext: "Sterne bis zum nächsten Level",
         levelHistory: "Level-Verlauf",
-        topLevels: "Top-Level"
+        topLevels: "Top-Level",
+        
+        // Games
+        games: {
+          color_identification: {
+            what_color_is_this: "Welche Farbe ist das?",
+            score: "Punkte"
+          }
+        }
       }
     };
   }
