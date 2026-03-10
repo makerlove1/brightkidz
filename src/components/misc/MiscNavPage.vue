@@ -13,12 +13,6 @@
       alt="calculate with numbers from 0 to 18"
     />
     <link-tile
-      title="Text sprechen"
-      nav-path="/misc/t2s"
-      src="/img/games/T2S.png"
-      alt="text to speech"
-    />
-    <link-tile
       :title="t('colorBlending')"
       nav-path="/misc/color-blending"
       src="/img/games/ColorBlending.svg"

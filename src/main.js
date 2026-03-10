@@ -14,7 +14,6 @@ import DDBuildWordsGame from "./components/drag_drop/DDBuildWordsGame.vue";
 import DDCharacters from "./components/drag_drop/DDCharacters.vue";
 import MiscNavPage from "./components/misc/MiscNavPage.vue";
 import CalculateNumbers0To18 from "./components/misc/CalculateNumbers0To18.vue";
-import TextToSppech from "./components/misc/TextToSpeech.vue";
 import QuizGame from "./components/misc/QuizGame.vue";
 import ColorBlendingGame from "./components/misc/ColorBlendingGame.vue";
 import ColorIdentificationGame from "./components/misc/ColorIdentificationGame.vue";
@@ -87,11 +86,6 @@ const router = createRouter({
       path: "/misc/numbers-0-to-18",
       name: "CalculateNumbers0To18",
       component: CalculateNumbers0To18,
-    },
-    {
-      path: "/misc/t2s",
-      name: "TextToSpeech",
-      component: TextToSppech,
     },
     {
       path: "/misc/quiz",
