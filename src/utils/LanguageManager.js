@@ -478,12 +478,25 @@ class LanguageManager {
   }
 
   translate(key) {
-    const translation = this.translations[this.currentLanguage]?.[key];
-    if (!translation) {
-      errorLogger.logWarning('Translation missing', { key, language: this.currentLanguage });
+    // Handle nested keys like 'games.color_identification.what_color_is_this'
+    const keys = key.split('.');
+    let translation = this.translations[this.currentLanguage];
+    
+    for (const k of keys) {
+      if (translation && typeof translation === 'object' && k in translation) {
+        translation = translation[k];
+      } else {
+        errorLogger.logWarning('Translation missing', { key, language: this.currentLanguage });
+        return key;
+      }
+    }
+    
+    if (typeof translation === 'string') {
+      return translation;
+    } else {
+      errorLogger.logWarning('Translation not a string', { key, language: this.currentLanguage });
       return key;
     }
-    return translation;
   }
 
   t(key) {
