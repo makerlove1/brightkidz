@@ -16,6 +16,12 @@
             :alt="currentColor.name.en"
             class="color-image"
           />
+          <div 
+            v-else 
+            class="color-text"
+          >
+            {{ currentColor.name.en }}
+          </div>
         </div>
         <div class="question-text">
           {{ t('games.color_identification.what_color_is_this') }}
@@ -81,19 +87,19 @@ export default {
       currentQuestion: 0,
       totalQuestions: 10,
       allColors: [
-        // 12 colors from the color wheel
+        // 12 colors from the color wheel - only include images that exist
         { id: "red", hex: "#FF0000", name: { en: "Red", fil: "Pula" }, sound: { en: "red", fil: "pula" }, image: "/img/colors/red.svg" },
-        { id: "red-orange", hex: "#FF4500", name: { en: "Red Orange", fil: "Pula-Kahel" }, sound: { en: "red-orange", fil: "pula-kahel" }, image: "/img/colors/red-orange.svg" },
+        { id: "red-orange", hex: "#FF4500", name: { en: "Red Orange", fil: "Pula-Kahel" }, sound: { en: "red-orange", fil: "pula-kahel" } },
         { id: "orange", hex: "#FFA500", name: { en: "Orange", fil: "Kahel" }, sound: { en: "orange", fil: "kahel" }, image: "/img/colors/orange.svg" },
-        { id: "yellow-orange", hex: "#FFD700", name: { en: "Yellow Orange", fil: "Dilaw-Kahel" }, sound: { en: "yellow-orange", fil: "dilaw-kahel" }, image: "/img/colors/yellow-orange.svg" },
+        { id: "yellow-orange", hex: "#FFD700", name: { en: "Yellow Orange", fil: "Dilaw-Kahel" }, sound: { en: "yellow-orange", fil: "dilaw-kahel" } },
         { id: "yellow", hex: "#FFFF00", name: { en: "Yellow", fil: "Dilaw" }, sound: { en: "yellow", fil: "dilaw" }, image: "/img/colors/yellow.svg" },
-        { id: "yellow-green", hex: "#9ACD32", name: { en: "Yellow Green", fil: "Dilaw-Berde" }, sound: { en: "yellow-green", fil: "dilaw-berde" }, image: "/img/colors/yellow-green.svg" },
+        { id: "yellow-green", hex: "#9ACD32", name: { en: "Yellow Green", fil: "Dilaw-Berde" }, sound: { en: "yellow-green", fil: "dilaw-berde" } },
         { id: "green", hex: "#00FF00", name: { en: "Green", fil: "Berde" }, sound: { en: "green", fil: "berde" }, image: "/img/colors/green.svg" },
-        { id: "blue-green", hex: "#008080", name: { en: "Blue Green", fil: "Asul-Berde" }, sound: { en: "blue-green", fil: "asul-berde" }, image: "/img/colors/blue-green.svg" },
+        { id: "blue-green", hex: "#008080", name: { en: "Blue Green", fil: "Asul-Berde" }, sound: { en: "blue-green", fil: "asul-berde" } },
         { id: "blue", hex: "#0000FF", name: { en: "Blue", fil: "Asul" }, sound: { en: "blue", fil: "asul" }, image: "/img/colors/blue.svg" },
-        { id: "blue-violet", hex: "#4B0082", name: { en: "Blue Violet", fil: "Asul-Lila" }, sound: { en: "blue-violet", fil: "asul-lila" }, image: "/img/colors/blue-violet.svg" },
-        { id: "violet", hex: "#800080", name: { en: "Violet", fil: "Lila" }, sound: { en: "violet", fil: "lila" }, image: "/img/colors/violet.svg" },
-        { id: "red-violet", hex: "#C71585", name: { en: "Red Violet", fil: "Pula-Lila" }, sound: { en: "red-violet", fil: "pula-lila" }, image: "/img/colors/red-violet.svg" }
+        { id: "blue-violet", hex: "#4B0082", name: { en: "Blue Violet", fil: "Asul-Lila" }, sound: { en: "blue-violet", fil: "asul-lila" } },
+        { id: "violet", hex: "#800080", name: { en: "Violet", fil: "Lila" }, sound: { en: "violet", fil: "lila" }, image: "/img/colors/purple.svg" },
+        { id: "red-violet", hex: "#C71585", name: { en: "Red Violet", fil: "Pula-Lila" }, sound: { en: "red-violet", fil: "pula-lila" } }
       ]
     };
   },
@@ -252,6 +258,15 @@ export default {
   height: 80%;
   object-fit: contain;
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.color-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  text-align: center;
+  padding: 10px;
 }
 
 .question-text {
