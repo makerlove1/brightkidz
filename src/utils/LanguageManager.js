@@ -28,6 +28,10 @@ class LanguageManager {
         quiz: "Quiz Game",
         quizAlt: "identify objects, letters and numbers",
         
+        // Color blending game
+        colorBlending: "Color Blending",
+        colorBlendingAlt: "mix colors and learn color names",
+        
         // Common
         back: "Back",
         help: "Help",
@@ -135,6 +139,10 @@ class LanguageManager {
         quiz: "Laro ng Pagsusulit",
         quizAlt: "kilalanin ang mga bagay, titik at numero",
         
+        // Color blending game
+        colorBlending: "Paghahalo ng Kulay",
+        colorBlendingAlt: "maghalo ng mga kulay at matuto ng mga pangalan ng kulay",
+        
         // Common
         back: "Bumalik",
         help: "Tulong",
@@ -241,6 +249,10 @@ class LanguageManager {
         // Quiz game
         quiz: "Quiz-Spiel",
         quizAlt: "Objekte, Buchstaben und Zahlen identifizieren",
+        
+        // Color blending game
+        colorBlending: "Farbmischen",
+        colorBlendingAlt: "Farben mischen und Farbnamen lernen",
         
         // Common
         back: "Zurück",

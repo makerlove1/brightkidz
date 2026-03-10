@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Blending Icon Generator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .icon-container {
+            width: 200px;
+            height: 200px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .color-circles {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .color-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .red { background: #FF0000; }
+        .blue { background: #0000FF; }
+        .yellow { background: #FFFF00; }
+        .mixed-result {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #FF0000 0%, #0000FF 50%, #800080 100%);
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            position: relative;
+        }
+        .plus-sign {
+            font-size: 24px;
+            font-weight: bold;
+            color: #666;
+            margin: 0 5px;
+        }
+        .equals-sign {
+            font-size: 20px;
+            font-weight: bold;
+            color: #666;
+            margin: 0 8px;
+        }
+        .blend-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .title {
+            position: absolute;
+            bottom: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+        .palette-bg {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(45deg, 
+                #FF0000 0%, #FF7F00 14%, #FFFF00 28%, 
+                #00FF00 42%, #0000FF 57%, #4B0082 71%, 
+                #9400D3 85%, #FF0000 100%);
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+        .instructions {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Color Blending Game Icon</h1>
+    
+    <div class="icon-container" id="colorIcon">
+        <div class="palette-bg"></div>
+        <div class="blend-row">
+            <div class="color-circle red"></div>
+            <div class="plus-sign">+</div>
+            <div class="color-circle blue"></div>
+            <div class="equals-sign">=</div>
+            <div class="mixed-result"></div>
+        </div>
+        <div class="title">Color Blending</div>
+    </div>
+    
+    <div class="instructions">
+        <h3>Instructions to Create PNG:</h3>
+        <ol>
+            <li>Right-click on the icon above</li>
+            <li>Select "Inspect Element" or "Inspect"</li>
+            <li>In the developer tools, right-click on the icon container</li>
+            <li>Select "Screenshot Node" or use a screenshot tool</li>
+            <li>Save as "ColorBlending.png"</li>
+            <li>Place in: <code>edukiz/public/img/games/ColorBlending.png</code></li>
+        </ol>
+        
+        <p><strong>Alternative:</strong> Use any image editing software to create a 200x200px icon with:</p>
+        <ul>
+            <li>Two colored circles (red + blue)</li>
+            <li>A plus sign between them</li>
+            <li>An equals sign</li>
+            <li>A mixed color result (purple)</li>
+            <li>White background with rounded corners</li>
+        </ul>
+    </div>
+
+    <script>
+        // Add some animation to make it more appealing
+        document.addEventListener('DOMContentLoaded', function() {
+            const circles = document.querySelectorAll('.color-circle');
+            const result = document.querySelector('.mixed-result');
+            
+            setTimeout(() => {
+                circles.forEach((circle, index) => {
+                    circle.style.transform = 'scale(1.1)';
+                    circle.style.transition = 'transform 0.3s ease';
+                    setTimeout(() => {
+                        circle.style.transform = 'scale(1)';
+                    }, 200 + index * 100);
+                });
+                
+                setTimeout(() => {
+                    result.style.transform = 'scale(1.2)';
+                    result.style.transition = 'transform 0.5s ease';
+                    setTimeout(() => {
+                        result.style.transform = 'scale(1)';
+                    }, 500);
+                }, 600);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

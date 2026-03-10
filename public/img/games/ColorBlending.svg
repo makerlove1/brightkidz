@@ -1,0 +1,47 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" rx="20" ry="20" fill="white" stroke="#ddd" stroke-width="2"/>
+  
+  <!-- Gradient background -->
+  <defs>
+    <linearGradient id="rainbowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF0000;stop-opacity:0.1" />
+      <stop offset="33%" style="stop-color:#00FF00;stop-opacity:0.1" />
+      <stop offset="66%" style="stop-color:#0000FF;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#FF00FF;stop-opacity:0.1" />
+    </linearGradient>
+    <linearGradient id="mixedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF0000;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0000FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#800080;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background gradient -->
+  <rect width="200" height="200" rx="20" ry="20" fill="url(#rainbowGrad)"/>
+  
+  <!-- Red circle -->
+  <circle cx="60" cy="100" r="25" fill="#FF0000" stroke="white" stroke-width="3"/>
+  
+  <!-- Plus sign -->
+  <text x="95" y="110" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#666" text-anchor="middle">+</text>
+  
+  <!-- Blue circle -->
+  <circle cx="130" cy="100" r="25" fill="#0000FF" stroke="white" stroke-width="3"/>
+  
+  <!-- Equals sign -->
+  <text x="100" y="140" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#666" text-anchor="middle">=</text>
+  
+  <!-- Mixed result circle -->
+  <circle cx="100" cy="160" r="20" fill="url(#mixedGrad)" stroke="white" stroke-width="3"/>
+  
+  <!-- Title -->
+  <text x="100" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">Color Blending</text>
+  
+  <!-- Palette icon in corner -->
+  <circle cx="170" cy="30" r="12" fill="none" stroke="#ccc" stroke-width="2"/>
+  <circle cx="166" cy="26" r="3" fill="#FF0000"/>
+  <circle cx="174" cy="26" r="3" fill="#00FF00"/>
+  <circle cx="166" cy="34" r="3" fill="#0000FF"/>
+  <circle cx="174" cy="34" r="3" fill="#FFFF00"/>
+</svg>
