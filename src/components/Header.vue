@@ -64,7 +64,7 @@ import LevelDisplay from "./LevelDisplay.vue";
 import languageManager from "@/utils/LanguageManager";
 import axios from 'axios';
 
-const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+const API_URL = process.env.VUE_APP_API_URL || 'https://brightkidz-production-43d4.up.railway.app/api';
 
 export default {
   name: "Header",
