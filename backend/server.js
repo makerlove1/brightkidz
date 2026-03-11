@@ -53,10 +53,11 @@ async function startServer() {
     process.exit(1);
   }
 
-  app.listen(PORT, () => {
-    console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📊 Admin API: http://localhost:${PORT}/api/admin`);
-    console.log(`🔐 Auth API: http://localhost:${PORT}/api/auth`);
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`\n🚀 Server running on port ${PORT}`);
+    console.log(`📊 Admin API: /api/admin`);
+    console.log(`🔐 Auth API: /api/auth`);
+    console.log(`🏥 Health check: /api/health`);
   });
 }
 

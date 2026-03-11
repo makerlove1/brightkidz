@@ -94,6 +94,30 @@ The backend needs to connect to MySQL. Make sure:
 
 ## 🐛 Common Issues & Solutions
 
+### Issue: "502 Bad Gateway" (Public Domain)
+**Symptoms:**
+- Internal healthcheck passes ✓
+- Server logs show "Server running on http://localhost:8080"
+- Public domain returns 502 Bad Gateway
+
+**Root Cause:**
+Server listening on localhost only instead of all interfaces (0.0.0.0)
+
+**Solution:**
+The server must listen on `0.0.0.0` to accept external connections:
+```javascript
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
+
+**Why this works:**
+- Railway's proxy needs to access the app from outside the container
+- Listening on localhost (127.0.0.1) only allows internal connections
+- Listening on 0.0.0.0 allows connections from any network interface
+
+**This has been fixed in the latest code. Push to GitHub and redeploy.**
+
 ### Issue: "Cannot find module 'express'"
 **Solution:** 
 - Build command not running properly
