@@ -92,15 +92,15 @@ export default {
       maxLevel: 6,
       droppedNumbers: [],
       choices: [],
-      firstElement: null,
-      secondElement: null,
+      firstElement: { image: '/img/characters/0.svg', number: 0 },
+      secondElement: { image: '/img/characters/0.svg', number: 0 },
       solution: {
         numberConfigs: [],
       },
       isGameOver: false,
       isLevelFinished: false,
       explanation: "calculation0To18",
-      operator: null,
+      operator: { image: '/img/characters/+.svg', character: '+' },
       finishedRounds: 0,
       previousLevelDisabled: true,
       nextLevelDisabled: true,
@@ -223,9 +223,13 @@ export default {
     ondragstart: function (event) {
       let dragElement = event.target;
       try {
-        SoundUtils.play(
-          SoundLib[dragElement.getAttribute("data-identifier").toLowerCase()]
-        );
+        let identifier = dragElement.getAttribute("data-identifier");
+        if (identifier) {
+          let soundObject = SoundLib[identifier.toLowerCase()];
+          if (soundObject && typeof soundObject.play === 'function') {
+            soundObject.play();
+          }
+        }
       } catch (e) {
         console.error("Error dragging. See event content below ", e);
         console.error(event);
@@ -234,7 +238,20 @@ export default {
     ondrop: function (event) {
       SoundUtils.stopAll();
       let dragElement = event.relatedTarget;
-      let draggedNumber = parseInt(dragElement.getAttribute("data-identifier"));
+      
+      // Add null checking for dragElement
+      if (!dragElement) {
+        console.error("Drag element is null or undefined");
+        return false;
+      }
+      
+      let draggedNumberAttr = dragElement.getAttribute("data-identifier");
+      if (!draggedNumberAttr) {
+        console.error("Drag element missing data-identifier attribute");
+        return false;
+      }
+      
+      let draggedNumber = parseInt(draggedNumberAttr);
       let expectedSolutionPart =
         this.solution.numberConfigs[this.droppedNumbers.length].number;
       if (draggedNumber === expectedSolutionPart) {
