@@ -3,21 +3,25 @@
     class="language-switcher-chathead"
     :style="chatheadStyle"
     ref="chathead"
-    @mousedown="startDrag"
-    @touchstart="startDrag"
   >
     <!-- Chat Head Button -->
-    <button 
-      @click="toggleDropdown" 
-      @mousedown.stop
-      @touchstart.stop
-      class="chathead-button"
-      :class="{ active: isOpen, dragging: isDragging }"
-      :title="languageManager.t('language')"
+    <div 
+      class="chathead-draggable"
+      @mousedown="startDrag"
+      @touchstart="startDrag"
     >
-      <span class="flag-icon">{{ currentFlag }}</span>
-      <span class="language-code">{{ currentLanguage.toUpperCase() }}</span>
-    </button>
+      <button 
+        @click="toggleDropdown" 
+        @mousedown.stop
+        @touchstart.stop
+        class="chathead-button"
+        :class="{ active: isOpen, dragging: isDraggingChathead }"
+        :title="languageManager.t('language')"
+      >
+        <span class="flag-icon">{{ currentFlag }}</span>
+        <span class="language-code">{{ currentLanguage.toUpperCase() }}</span>
+      </button>
+    </div>
     
     <!-- Backdrop -->
     <transition name="backdrop">
@@ -96,31 +100,24 @@ export default {
       
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
-      const dropdownWidth = 280;
+      const dropdownWidth = 300;
       const dropdownHeight = 400;
       
-      // Position dropdown above the chathead
-      let left = this.chatheadX - dropdownWidth / 2;
-      let top = this.chatheadY - dropdownHeight - 10;
+      // Position dropdown in the center of the screen
+      let left = (viewportWidth - dropdownWidth) / 2;
+      let top = (viewportHeight - dropdownHeight) / 2;
       
-      // Adjust if dropdown goes off screen
-      if (left < 10) left = 10;
-      if (left + dropdownWidth > viewportWidth) {
-        left = viewportWidth - dropdownWidth - 10;
-      }
-      if (top < 10) {
-        // Position below if no space above
-        top = this.chatheadY + 70;
-      }
-      if (top + dropdownHeight > viewportHeight - 10) {
-        top = viewportHeight - dropdownHeight - 10;
-      }
+      // Ensure it stays within viewport bounds
+      left = Math.max(20, Math.min(left, viewportWidth - dropdownWidth - 20));
+      top = Math.max(20, Math.min(top, viewportHeight - dropdownHeight - 20));
       
       return {
         left: `${left}px`,
         top: `${top}px`,
         position: 'fixed',
-        zIndex: 10001
+        zIndex: 10001,
+        width: `${dropdownWidth}px`,
+        height: `${dropdownHeight}px`
       };
     }
   },
@@ -250,9 +247,15 @@ export default {
 .language-switcher-chathead {
   position: fixed;
   z-index: 10000;
+  user-select: none;
+  touch-action: none;
+}
+
+.chathead-draggable {
   cursor: grab;
   user-select: none;
   touch-action: none;
+  display: inline-block;
   
   &:active {
     cursor: grabbing;
@@ -376,8 +379,6 @@ export default {
 
 .language-dropdown {
   position: fixed;
-  bottom: 110px;
-  right: 24px;
   background: linear-gradient(135deg, rgba(30, 30, 50, 0.98) 0%, rgba(20, 20, 40, 0.98) 100%);
   border: 2px solid rgba(102, 126, 234, 0.4);
   border-radius: 20px;
@@ -385,21 +386,19 @@ export default {
               0 8px 24px rgba(102, 126, 234, 0.3);
   overflow: hidden;
   z-index: 9999;
-  min-width: 240px;
-  max-width: 280px;
+  width: 300px;
+  height: 400px;
+  resize: none;
   backdrop-filter: blur(20px);
   
   @media (max-width: 768px) {
-    bottom: 100px;
-    right: 20px;
-    min-width: 220px;
-    max-width: calc(100vw - 40px);
+    width: 280px;
+    height: 380px;
   }
   
   @media (max-width: 480px) {
-    right: 50%;
-    transform: translateX(50%);
-    min-width: 260px;
+    width: 260px;
+    height: 360px;
   }
 }
 
@@ -570,22 +569,22 @@ export default {
   @keyframes dropdown-in {
     0% {
       opacity: 0;
-      transform: translateX(-50%) translateY(20px) scale(0.8);
+      transform: translateY(20px) scale(0.8);
     }
     100% {
       opacity: 1;
-      transform: translateX(-50%) translateY(0) scale(1);
+      transform: translateY(0) scale(1);
     }
   }
   
   @keyframes dropdown-out {
     0% {
       opacity: 1;
-      transform: translateX(-50%) translateY(0) scale(1);
+      transform: translateY(0) scale(1);
     }
     100% {
       opacity: 0;
-      transform: translateX(-50%) translateY(20px) scale(0.8);
+      transform: translateY(20px) scale(0.8);
     }
   }
 }
