@@ -46,6 +46,7 @@ const EXPLANATIONS = {
   dragdrop_buildwords: 'I-drag at i-drop upang bumuo ng mga salita',
   dragdrop_characters: 'I-drag at i-drop ang mga karakter',
   memory: 'Larong memorya',
+  quiz: 'Laro ng Pagsusulit - Kilalanin ang mga bagay, titik at numero',
   t2s: 'Teksto sa pananalita'
 };
 

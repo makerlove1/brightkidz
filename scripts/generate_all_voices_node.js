@@ -152,6 +152,7 @@ const EXPLANATIONS = {
   dragdrop_buildwords: { en: 'Drag and drop to build words', tl: 'I-drag at i-drop upang bumuo ng mga salita' },
   dragdrop_characters: { en: 'Drag and drop the characters', tl: 'I-drag at i-drop ang mga karakter' },
   memory: { en: 'Memory game', tl: 'Larong memorya' },
+  quiz: { en: 'Quiz Game - Identify objects, letters and numbers', tl: 'Laro ng Pagsusulit - Kilalanin ang mga bagay, titik at numero' },
   t2s: { en: 'Text to speech', tl: 'Teksto sa pananalita' }
 };
 
