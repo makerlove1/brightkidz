@@ -1,10 +1,18 @@
 <template>
-  <div class="language-switcher-fab">
-    <!-- Floating Action Button -->
+  <div 
+    class="language-switcher-chathead"
+    :style="chatheadStyle"
+    ref="chathead"
+    @mousedown="startDrag"
+    @touchstart="startDrag"
+  >
+    <!-- Chat Head Button -->
     <button 
       @click="toggleDropdown" 
-      class="fab-button"
-      :class="{ active: isOpen }"
+      @mousedown.stop
+      @touchstart.stop
+      class="chathead-button"
+      :class="{ active: isOpen, dragging: isDragging }"
       :title="languageManager.t('language')"
     >
       <span class="flag-icon">{{ currentFlag }}</span>
@@ -13,15 +21,18 @@
     
     <!-- Backdrop -->
     <transition name="backdrop">
-      <div v-if="isOpen" class="fab-backdrop" @click="toggleDropdown"></div>
+      <div v-if="isOpen" class="chathead-backdrop" @click="toggleDropdown"></div>
     </transition>
     
     <!-- Dropdown Menu -->
     <transition name="dropdown">
-      <div v-if="isOpen" class="language-dropdown">
+      <div v-if="isOpen" class="language-dropdown" :style="dropdownStyle">
         <div class="dropdown-header">
           <em class="fas fa-globe"></em>
           <span>{{ languageManager.t('language') }}</span>
+          <button class="close-dropdown" @click="toggleDropdown">
+            <em class="fas fa-times"></em>
+          </button>
         </div>
         <div class="language-options">
           <button
@@ -56,13 +67,61 @@ export default {
       isOpen: false,
       currentLanguage: languageManager.currentLanguage || 'en',
       languages: languageManager.getAvailableLanguages(),
-      unsubscribe: null
+      unsubscribe: null,
+      isDraggingChathead: false,
+      dragStartX: 0,
+      dragStartY: 0,
+      dragStartLeft: 0,
+      dragStartTop: 0,
+      chatheadX: 0,
+      chatheadY: 0
     };
   },
   computed: {
     currentFlag() {
       const lang = this.languages.find(l => l.code === this.currentLanguage);
       return lang ? lang.flag : '🌐';
+    },
+    chatheadStyle() {
+      return {
+        left: `${this.chatheadX}px`,
+        top: `${this.chatheadY}px`,
+        position: 'fixed',
+        zIndex: 10000,
+        cursor: this.isDraggingChathead ? 'grabbing' : 'grab'
+      };
+    },
+    dropdownStyle() {
+      if (!this.isOpen) return {};
+      
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const dropdownWidth = 280;
+      const dropdownHeight = 400;
+      
+      // Position dropdown above the chathead
+      let left = this.chatheadX - dropdownWidth / 2;
+      let top = this.chatheadY - dropdownHeight - 10;
+      
+      // Adjust if dropdown goes off screen
+      if (left < 10) left = 10;
+      if (left + dropdownWidth > viewportWidth) {
+        left = viewportWidth - dropdownWidth - 10;
+      }
+      if (top < 10) {
+        // Position below if no space above
+        top = this.chatheadY + 70;
+      }
+      if (top + dropdownHeight > viewportHeight - 10) {
+        top = viewportHeight - dropdownHeight - 10;
+      }
+      
+      return {
+        left: `${left}px`,
+        top: `${top}px`,
+        position: 'fixed',
+        zIndex: 10001
+      };
     }
   },
   mounted() {
@@ -72,37 +131,115 @@ export default {
       this.languages = languageManager.getAvailableLanguages();
     });
     
+    // Load saved position or use default
+    const savedPos = localStorage.getItem('chatheadPosition');
+    if (savedPos) {
+      const { x, y } = JSON.parse(savedPos);
+      this.chatheadX = x;
+      this.chatheadY = y;
+    } else {
+      // Default position (bottom right)
+      this.chatheadX = window.innerWidth - 100;
+      this.chatheadY = window.innerHeight - 100;
+    }
+    
     // Close dropdown when clicking outside
     document.addEventListener('click', this.handleClickOutside);
+    window.addEventListener('resize', this.handleResize);
   },
   beforeUnmount() {
     if (this.unsubscribe) {
       this.unsubscribe();
     }
     document.removeEventListener('click', this.handleClickOutside);
+    window.removeEventListener('resize', this.handleResize);
+    this.removeDragEventListeners();
   },
   methods: {
     toggleDropdown() {
       this.isOpen = !this.isOpen;
     },
+    
     selectLanguage(code) {
       try {
         languageManager.setLanguage(code);
         this.currentLanguage = code;
         this.isOpen = false;
-        
-        // Emit event for parent components
-        this.emitter.emit('languageChanged', code);
-        
+        this.$emit('languageChanged', code);
         errorLogger.logInfo('Language switched', { language: code });
       } catch (e) {
         errorLogger.logError('Language switch failed', e);
       }
     },
+    
     handleClickOutside(event) {
       const switcher = this.$el;
       if (switcher && !switcher.contains(event.target)) {
         this.isOpen = false;
+      }
+    },
+    
+    startDrag(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      this.isDraggingChathead = true;
+      this.dragStartX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      this.dragStartY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+      this.dragStartLeft = this.chatheadX;
+      this.dragStartTop = this.chatheadY;
+      
+      document.addEventListener('mousemove', this.onDrag);
+      document.addEventListener('touchmove', this.onDrag, { passive: false });
+      document.addEventListener('mouseup', this.stopDrag);
+      document.addEventListener('touchend', this.stopDrag);
+      document.addEventListener('touchcancel', this.stopDrag);
+      
+      // Prevent text selection during drag
+      document.body.style.userSelect = 'none';
+    },
+    
+    onDrag(e) {
+      if (!this.isDraggingChathead) return;
+      
+      e.preventDefault();
+      const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+      
+      const deltaX = clientX - this.dragStartX;
+      const deltaY = clientY - this.dragStartY;
+      
+      this.chatheadX = Math.max(0, Math.min(window.innerWidth - 60, this.dragStartLeft + deltaX));
+      this.chatheadY = Math.max(0, Math.min(window.innerHeight - 60, this.dragStartTop + deltaY));
+    },
+    
+    stopDrag() {
+      this.isDraggingChathead = false;
+      document.removeEventListener('mousemove', this.onDrag);
+      document.removeEventListener('touchmove', this.onDrag);
+      document.removeEventListener('mouseup', this.stopDrag);
+      document.removeEventListener('touchend', this.stopDrag);
+      document.removeEventListener('touchcancel', this.stopDrag);
+      document.body.style.userSelect = '';
+      
+      // Save position to localStorage
+      localStorage.setItem('chatheadPosition', JSON.stringify({
+        x: this.chatheadX,
+        y: this.chatheadY
+      }));
+    },
+    
+    handleResize() {
+      // Keep chathead within bounds on resize
+      this.chatheadX = Math.min(this.chatheadX, window.innerWidth - 60);
+      this.chatheadY = Math.min(this.chatheadY, window.innerHeight - 60);
+    },
+    
+    removeDragEventListeners() {
+      const chathead = this.$refs.chathead;
+      if (chathead) {
+        chathead.removeEventListener('mousedown', this.startDrag);
+        chathead.removeEventListener('touchstart', this.startDrag);
       }
     }
   }
@@ -110,19 +247,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.language-switcher-fab {
+.language-switcher-chathead {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 9999;
+  z-index: 10000;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
   
-  @media (max-width: 768px) {
-    bottom: 20px;
-    right: 20px;
+  &:active {
+    cursor: grabbing;
   }
 }
 
-.fab-button {
+.chathead-button {
   width: 70px;
   height: 70px;
   border-radius: 50%;
@@ -136,30 +273,31 @@ export default {
   justify-content: center;
   gap: 4px;
   box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4), 
-              0 4px 12px rgba(0, 0, 0, 0.3);
+              0 4px 12px rgba(0, 0, 0, 0.3),
+              0 0 0 2px rgba(255, 255, 255, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   
-  // Ripple effect background
-  &::before {
+  // Chat head shadow effect
+  &::after {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    z-index: 1;
   }
   
   .flag-icon {
     font-size: 2rem;
     line-height: 1;
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   }
   
   .language-code {
@@ -167,19 +305,16 @@ export default {
     font-weight: 700;
     letter-spacing: 1px;
     position: relative;
-    z-index: 1;
+    z-index: 2;
     opacity: 0.95;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
   
   &:hover {
-    transform: scale(1.1) rotate(5deg);
+    transform: scale(1.1);
     box-shadow: 0 12px 32px rgba(102, 126, 234, 0.5), 
-                0 6px 16px rgba(0, 0, 0, 0.4);
-    
-    &::before {
-      width: 100%;
-      height: 100%;
-    }
+                0 6px 16px rgba(0, 0, 0, 0.4),
+                0 0 0 3px rgba(255, 255, 255, 0.2);
   }
   
   &:active {
@@ -193,6 +328,12 @@ export default {
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.3),
                 0 12px 32px rgba(102, 126, 234, 0.5);
     animation: pulse 2s infinite;
+  }
+  
+  &.dragging {
+    opacity: 0.8;
+    transform: scale(0.9);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   }
   
   @media (max-width: 768px) {

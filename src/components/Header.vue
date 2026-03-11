@@ -299,7 +299,13 @@ export default {
 
 .logo-wrap { display:flex; align-items:center; gap:8px; margin-right:8px; }
 
-.site-logo { height: 40px; }
+.site-logo { 
+  height: 40px; 
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
 
 
 .header-left {
