@@ -330,7 +330,7 @@ export class BKTModel {
       }
 
       const axios = (await import('axios')).default;
-      const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+      const API_URL = process.env.VUE_APP_API_URL || 'https://brightkidz-production-43d4.up.railway.app/api';
       
       // Save each skill
       for (const [skillName, skillData] of Object.entries(this.skills)) {
@@ -371,7 +371,7 @@ export class BKTModel {
       }
 
       const axios = (await import('axios')).default;
-      const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+      const API_URL = process.env.VUE_APP_API_URL || 'https://brightkidz-production-43d4.up.railway.app/api';
       
       const response = await axios.get(
         `${API_URL}/bkt/skills`,
@@ -404,7 +404,7 @@ export class BKTModel {
       }
 
       const axios = (await import('axios')).default;
-      const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+      const API_URL = process.env.VUE_APP_API_URL || 'https://brightkidz-production-43d4.up.railway.app/api';
       
       // Save only the most recent entry
       if (this.history.length > 0) {
@@ -439,7 +439,7 @@ export class BKTModel {
       }
 
       const axios = (await import('axios')).default;
-      const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+      const API_URL = process.env.VUE_APP_API_URL || 'https://brightkidz-production-43d4.up.railway.app/api';
       
       const response = await axios.get(
         `${API_URL}/bkt/history?limit=${this.maxHistorySize}`,

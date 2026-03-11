@@ -411,7 +411,7 @@ class LanguageManager {
       if (token) {
         try {
           const axios = (await import('axios')).default;
-          const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+          const API_URL = process.env.VUE_APP_API_URL || 'https://brightkidz-production-43d4.up.railway.app/api';
           const response = await axios.get(
             `${API_URL}/preferences`,
             { headers: { Authorization: `Bearer ${token}` } }
@@ -444,7 +444,7 @@ class LanguageManager {
       if (token) {
         try {
           const axios = (await import('axios')).default;
-          const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+          const API_URL = process.env.VUE_APP_API_URL || 'https://brightkidz-production-43d4.up.railway.app/api';
           await axios.post(
             `${API_URL}/preferences/language`,
             { language: lang },
