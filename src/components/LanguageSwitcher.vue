@@ -140,6 +140,17 @@ export default {
       this.chatheadY = window.innerHeight - 100;
     }
     
+    // Ensure drag functionality is properly initialized after DOM is ready
+    this.$nextTick(() => {
+      const draggableElement = this.$el.querySelector('.chathead-draggable');
+      if (draggableElement) {
+        // Ensure the element is properly set up for dragging
+        draggableElement.style.cursor = 'grab';
+        draggableElement.style.userSelect = 'none';
+        draggableElement.style.touchAction = 'none';
+      }
+    });
+    
     // Close dropdown when clicking outside
     document.addEventListener('click', this.handleClickOutside);
     window.addEventListener('resize', this.handleResize);

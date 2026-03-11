@@ -6,11 +6,17 @@
       <!-- Surprise Animation -->
       <div v-if="!alreadyCheckedIn" class="surprise-animation">
         <div class="confetti"></div>
-        <div class="reward-display">
-          <div class="reward-emoji">{{ reward.emoji }}</div>
-          <h2 class="reward-title">{{ reward.name }}</h2>
-          <div class="reward-value">+{{ reward.value }} {{ t('points') }}</div>
-          <p class="reward-message">{{ reward.message }}</p>
+        <div class="reward-display" v-if="reward">
+          <div class="reward-emoji">{{ reward.emoji || '🎉' }}</div>
+          <h2 class="reward-title">{{ reward.name || t('dailyReward') }}</h2>
+          <div class="reward-value">+{{ reward.value || 10 }} {{ t('points') }}</div>
+          <p class="reward-message">{{ reward.message || t('keepItUp') }}</p>
+        </div>
+        <div class="reward-display" v-else>
+          <div class="reward-emoji">🎉</div>
+          <h2 class="reward-title">{{ t('dailyReward') }}</h2>
+          <div class="reward-value">+10 {{ t('points') }}</div>
+          <p class="reward-message">{{ t('keepItUp') }}</p>
         </div>
       </div>
 

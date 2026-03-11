@@ -178,6 +178,26 @@ export const SoundUtils = {
       errorLogger.logWarning("No sound source provided", { src });
       return;
     }
+    
+    // Type checking to prevent [object Object] paths
+    if (typeof src === 'object') {
+      errorLogger.logError("Invalid sound source type", { 
+        src, 
+        type: typeof src,
+        message: "Expected string but received object. Use sound.play() method instead of SoundUtils.play(sound)."
+      });
+      return;
+    }
+    
+    if (typeof src !== 'string') {
+      errorLogger.logError("Invalid sound source type", { 
+        src, 
+        type: typeof src,
+        message: "Expected string path but received " + typeof src
+      });
+      return;
+    }
+    
     try {
       return this.playSound(src);
     } catch (e) {

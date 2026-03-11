@@ -115,7 +115,7 @@ export default {
         SoundLib.success1,
       ];
       let randomSound = sounds[Math.floor(Math.random() * sounds.length)];
-      SoundUtils.play(randomSound);
+      randomSound.play();
       if (!this.isShowBoyVoiceAnimationActive) {
         this.isShowBoyVoiceAnimationActive = true;
         setTimeout(
@@ -142,7 +142,7 @@ export default {
         SoundLib.success5,
       ];
       let randomSound = sounds[Math.floor(Math.random() * sounds.length)];
-      SoundUtils.play(randomSound);
+      randomSound.play();
       if (!this.isShowGirlVoiceAnimationActive) {
         this.isShowGirlVoiceAnimationActive = true;
         setTimeout(
