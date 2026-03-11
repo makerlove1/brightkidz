@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api';
+// Force production API URL
+const API_URL = process.env.VUE_APP_API_URL || 'https://brightkidz-production-43d4.up.railway.app/api';
+
+console.log('🔧 API URL:', API_URL); // Debug log
 
 class AuthService {
   constructor() {
