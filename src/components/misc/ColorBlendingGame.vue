@@ -180,9 +180,10 @@ export default {
         return;
       }
       
-      // Play the color sound when clicked using proper language path
+      // Play the color sound when clicked using proper language-specific sound name
       const lang = SoundUtils.getLanguagePath();
-      SoundUtils.play(`${lang}/color/${color.id}`);
+      const soundName = lang === 'filipino' ? color.sound.fil : color.sound.en;
+      SoundUtils.play(`${lang}/color/${soundName}`);
       
       // Add color to selection (max 2 colors)
       if (this.selectedColors.length < 2) {
@@ -208,7 +209,9 @@ export default {
       
       // Play the resulting color sound immediately when two colors are selected
       const lang = SoundUtils.getLanguagePath();
-      SoundUtils.play(`${lang}/color/${result.result}`);
+      const resultColor = this.mixedColorResult;
+      const soundName = lang === 'filipino' ? resultColor.sound.fil : resultColor.sound.en;
+      SoundUtils.play(`${lang}/color/${soundName}`);
       
       // Show success
       setTimeout(() => {
