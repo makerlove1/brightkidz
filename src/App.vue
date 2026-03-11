@@ -2,7 +2,7 @@
   <div class="content-window">
     <router-view></router-view>
     <ErrorDisplay />
-    <LanguageSwitcher />
+    <LanguageSwitcher v-if="!isAdminPage" />
     <DailyLoginStreak ref="streakComponent" />
   </div>
 </template>
@@ -16,6 +16,11 @@ import DailyLoginStreak from "@/components/DailyLoginStreak.vue";
 export default {
   name: "App",
   components: { ErrorDisplay, LanguageSwitcher, DailyLoginStreak },
+  computed: {
+    isAdminPage() {
+      return this.$route.path.startsWith('/admin');
+    }
+  },
   mounted() {
     errorLogger.logInfo("App mounted successfully");
     this.detectMobileDevice();
