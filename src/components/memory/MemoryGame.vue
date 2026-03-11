@@ -194,7 +194,7 @@ export default {
       };
 
       if (!this.flippedCard) {
-        SoundUtils.play(currentCard.sound);
+        currentCard.sound.play();
         this.flippedCard = currentCard;
         this.isBoardLocked = false;
       } else {
@@ -212,7 +212,7 @@ export default {
           this.flippedCard = null;
           this.isBoardLocked = false;
         } else {
-          SoundUtils.play(currentCard.sound);
+          currentCard.sound.play();
 
           setTimeout(
             function () {
