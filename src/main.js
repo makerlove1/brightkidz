@@ -111,9 +111,15 @@ router.beforeEach((to, from, next) => {
   const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
   const isAuthenticated = authService.isAuthenticated();
   
-  // If trying to access login page while authenticated, redirect to home
+  // Special handling for admin logout - allow going to login page
   if (to.path === '/' && isAuthenticated) {
-    next('/home');
+    // If coming from admin page, allow going to login (for admin logout)
+    if (from.path === '/admin') {
+      next();
+    } else {
+      // Regular users go to home
+      next('/home');
+    }
   } else if (requiresAuth && !isAuthenticated) {
     next('/');
   } else if (requiresAdmin && !authService.isAdmin()) {
