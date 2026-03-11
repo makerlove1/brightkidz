@@ -212,7 +212,8 @@ export default {
     closeModal() {
       this.showModal = false;
     },
-    showStreakModal() {
+    async showStreakModal() {
+      await this.loadStreakData();
       this.showModal = true;
     }
   },
